@@ -3,12 +3,10 @@
   <head>
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-    <script type="text/javascript" src="leafletembed.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <style>
-      body { margin:0; padding:50; }
-      #map { position:absolute; top:0; bottom:0; }
-    </style>
+    <script type="text/javascript" src="calculate.js"></script>
+	<script type="text/javascript" src="leafletembed.js"></script>
     <title> Shortest Path </title>
   </head>
   <body>
@@ -18,25 +16,37 @@
 
     <div class="container">
       <form>
-	<fieldset>
-	  <legend> Information </legend>
-	  <font size="4">Start place :</font> <input class="inp" type="text" name="placea"/> <br/>
-	  <font size="4"> Destination :</font> <input class="inp" type="text" name="placeb"/> <br/>
-	  <div class="rad">
-	    <input type="radio" name="search" value="uniform"/> Uniform Search
-	    <input type="radio" name="search" value="heuristic"/> Heuristic Search
-	    <input type="radio" name="search" value="breadth"/> Breadth First Search </br>
-	  </div>
-	  <input class="sub" type="submit" value="Calculate"/>
-	</fieldset>
+		<fieldset>
+		<legend> Information </legend>
+		<font size="4">Start place :</font> <input class="inp" type="text" name="placea"/> <br/>
+		<font size="4"> Destination :</font> <input class="inp" type="text" name="placeb"/> <br/>
+		<div class="rad">
+			<input type="radio" name="search" value="uniform"/> Uniform Search
+			<input type="radio" name="search" value="heuristic"/> Heuristic Search
+			<input type="radio" name="search" value="breadth"/> Breadth First Search </br>
+		</div>
+	  <input class="submit" type="button" value="Calculate"/>
+		</fieldset>
       </form>
       <div id="map" class="leaf-container"> </div>
     </div>
 
     <script>
-      initmap();
+      $(document).ready(function()
+	  {
+		initmap();
+		$('.submit').click(function()
+		{
+			var placea = $('input[name=placea]').val();
+			var placeb = $('input[name=placeb]').val();
+			var radioVal = $("#rad input[type='radio']:checked");
+			if($.trim(placea) == "" || $.trim(placeb) == "" || $.trim(radioVal) == "")
+				alert('Input can not be left blank');
+			else
+				calculatePath(placea, placeb, radioVal);
+		});
+	  });
     </script>
-
   </body>
 <html>
 
