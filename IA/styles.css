@@ -1,0 +1,37 @@
+.leaf-container
+{
+	width: 850px;
+	height: 550px; 
+	position: absolute;
+	float: left;
+	margin-top: 150px;
+}
+fieldset
+{
+	width: 500px;
+	position: absolute;
+}
+.inp
+{
+	width: 300px;
+	height: 15px;
+	float: right;
+}
+legend
+{
+	font-size: 20px;
+}
+.container
+{
+	position: relative;
+}
+.rad
+{
+	position: relative;
+	float: left;
+}
+.sub
+{
+	float: center;
+	position: relative;
+}
