@@ -4,7 +4,7 @@
 	height: 600px; 
 	position: absolute;
 	float: left;
-	margin-top: 120px;
+	margin-top: 125px;
 }
 fieldset
 {
@@ -30,7 +30,7 @@ legend
 	position: relative;
 	float: left;
 }
-.sub
+.submit
 {
 	float: center;
 	position: relative;
