@@ -33,18 +33,26 @@ var reset = function() {
 	endPoint = [];
 	markers.clearMarkers();
 	lines.destroyFeatures();
+        $("#executionTime").hide();
 }
 
 var calculate = function() {
 	if(lines.features.length > 0) {
-		return;
+		lines.destroyFeatures();
 	}
 	if(endPoint.length == 2) {
 		var tempStart = new OpenLayers.Geometry.Point(startPoint[0], startPoint[1]).transform( toProjection, fromProjection);
 		var tempEnd = new OpenLayers.Geometry.Point(endPoint[0], endPoint[1]).transform( toProjection, fromProjection);
+                var algorithm;
+                if($('#aStar').is(':checked'))
+                    algorithm = "aStar";
+                else if($('#uniformCostSearch').is(':checked'))
+                    algorithm = "uniformCostSearch";
+                else if($('#breadthFirstSearch').is(':checked'))
+                    algorithm = "breadthFirstSearch";
 		$.ajax({
 			url: "ShortestPath?",
-			data: {"lon1" : tempStart.x, "lat1" : tempStart.y, "lon2" : tempEnd.x, "lat2" : tempEnd.y},
+			data: {"lon1" : tempStart.x, "lat1" : tempStart.y, "lon2" : tempEnd.x, "lat2" : tempEnd.y, "algorithm" : algorithm},
 			success: function(data){
                     parseCoordinates(data);
                 }
@@ -66,6 +74,11 @@ var addMarker = function(lon, lat) {
 }
 
 var parseCoordinates = function(coordinateString) {
+        var info = coordinateString.split("|")[1];
+        $("#executionTime").text(info);
+        $("#executionTime").css({"font-weight" : "bolder"});
+        $("#executionTime").show("slow");
+        coordinateString = coordinateString.split("|")[0];
 	var coordinateStrings = coordinateString.split(",");
 	var coordinates = [];
 	for(i = 0; i < coordinateStrings.length; i++) {
@@ -87,9 +100,9 @@ var drawLine = function(coordinates) {
 }
 
 var lineStyle = { 
-  strokeColor: '#0000ff', 
+  strokeColor: '#ff0000', 
   strokeOpacity: 0.5,
-  strokeWidth: 3
+  strokeWidth: 4
 };
 
 var clickMarker = function(e) {
@@ -155,9 +168,14 @@ $(document).keydown(function(e) {
 </head>
 
 <body onload="init()">
-<button onclick="reset()">Reset (R)</button>
-<button onclick="calculate()">Calculate shortest path (C)</button>
-Select two points on the map by clicking (reset using the button or "R"). Calculate the path using "Calculate shortest path" button.
+<b>Select two points on the map by clicking(Only in Niteroi city). Reset the points by clicking "Reset" or pressing "R".</b> </br> </br>
+Select the Algorithm : </br>
+<input type="radio" name="radio" id="aStar" value="aStar" checked/> A* Algorithm
+<input type="radio" name="radio" id="breadthFirstSearch" value="breadthFirstSearch"/> Breadth First Search Algorithm
+<input type="radio" name="radio" id="uniformCostSearch" value="uniformCostSearch" required/> Uniform Cost Search Algorithm </br>
+<button onclick="calculate()">Calculate(C)</button> 
+<button type="button" onclick="reset()">Reset(R)</button>
+<p id="executionTime" style="display: none"></p>
 <div id="map" style="width: 800px; height: 600px"></div>
 
 </body>

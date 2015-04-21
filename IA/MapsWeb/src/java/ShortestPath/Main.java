@@ -5,12 +5,14 @@ package ShortestPath;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Random;
 
 import javax.swing.JOptionPane;
@@ -58,15 +60,23 @@ public class Main
         return nodeTree.nearestNeighbor(coords, 1, false).get(0).value;
     }
     
-    public String shortestPath(double lat1, double lon1, double lat2, double lon2) 
+    public String shortestPath(double lat1, double lon1, double lat2, double lon2, String algorithm) 
     {
         GeoNode a = getNearest(new GeoNode(lat1,lon1));
         GeoNode b = getNearest(new GeoNode(lat2,lon2));
-        return aStar(a, b);
+        if(algorithm.equals("aStar"))
+            return aStar(a,b);
+        else if(algorithm.equals("uniformCostSearch"))
+                return uniformCostSearch(a,b);
+        else if(algorithm.equals("breadthFirstSearch"))
+                return breadthFirstSearch(a,b);
+        return "Failure";
     }
     
     public String aStar(GeoNode start, GeoNode dest)
     {
+        long started = System.currentTimeMillis();
+        long generated = 0;
         ArrayList<GeoNode> queue = new ArrayList<>();
         ArrayList<GeoNode> explored = new ArrayList<>();
         HashMap<GeoNode, GeoNode> path = new HashMap<>();
@@ -82,10 +92,15 @@ public class Main
             Collections.sort(queue);
             actual = queue.get(0);
             if(actual == dest)
-                return solution(start, dest, path);
+            {
+                long time = System.currentTimeMillis() - started;
+                return solution(start, dest, path, "Execution time(ms) : " + time +
+                                ", Distance(km) : " + actual.getDistance() + 
+                                ", Generated Nodes : "  + generated);
+            }
             queue.remove(actual);
             explored.add(actual);
-            fg = 0; fh = 0;
+            fg = 0;
             for (GeoNode n : actual.getConnections()) 
             {
                 if(!(explored.contains(n)))
@@ -97,7 +112,10 @@ public class Main
                         n.setDistance(fg);
                         n.setFunction(n.getDistance() + n.distanceFrom(dest));
                         if(!(queue.contains(n)))
+                        {
                             queue.add(n);
+                            generated++;
+                        }
                     }
                 }
             }
@@ -105,16 +123,100 @@ public class Main
         return "Failure";
     }
     
-    public String solution(GeoNode start, GeoNode dest, HashMap<GeoNode, GeoNode> path)
+    public String uniformCostSearch(GeoNode start, GeoNode dest)
+    {
+        long generated = 0;
+        long started = System.currentTimeMillis();
+        ArrayList<GeoNode> queue = new ArrayList<>();
+        ArrayList<GeoNode> explored = new ArrayList<>();
+        HashMap<GeoNode, GeoNode> path = new HashMap<>();
+        queue.add(start);
+        start.setFunction(0);
+        GeoNode actual = null;
+        double pathCost = 0;
+        while(!queue.isEmpty())
+        {
+            Collections.sort(queue);
+            actual = queue.get(0);
+            if(actual == dest)
+            {
+                long time = System.currentTimeMillis() - started;
+                return solution(start, dest, path, "Execution time(ms) : " + time +
+                                ", Distance(km) : " + actual.getFunction() + 
+                                ", Generated Nodes : "  + generated);
+            }
+            queue.remove(actual);
+            explored.add(actual);
+            boolean nodeExplored = false;
+            boolean nodeFrontier = false;
+            for(GeoNode n : actual.getConnections())
+            {
+                pathCost = actual.getFunction() + actual.distanceFrom(n);
+                nodeExplored = explored.contains(n);
+                nodeFrontier = queue.contains(n);
+                if(n.getFunction() > pathCost || (!nodeFrontier && !nodeExplored))
+                {
+                    n.setFunction(pathCost);
+                    path.put(n, actual);
+                    if(!nodeFrontier && !nodeExplored)
+                    {
+                        queue.add(n);
+                        generated++;
+                    }
+                }
+            }
+        }
+        return "Failure";
+    }
+    
+    public String breadthFirstSearch(GeoNode start, GeoNode dest)
+    {
+        long generated = 0;
+        long started = System.currentTimeMillis();
+        Queue<GeoNode> queue = new ArrayDeque<>();
+        ArrayList<GeoNode> explored = new ArrayList<>();
+        HashMap<GeoNode, GeoNode> path = new HashMap<>();
+        queue.add(start);
+        start.setDistance(0);
+        GeoNode actual = null;
+        while(!queue.isEmpty())
+        {
+            actual = queue.element();
+            if(actual == dest)
+            {
+                long time = System.currentTimeMillis() - started;
+                return solution(start, dest, path, "Execution time(ms) : " + time +
+                                ", Distance(km) : " + actual.getDistance() + 
+                                ", Generated Nodes : "  + generated);
+            }
+            queue.remove();
+            explored.add(actual);
+            for(GeoNode n : actual.getConnections())
+            {
+                if(!explored.contains(n))
+                {
+                    n.setDistance(actual.getDistance() + actual.distanceFrom(n));
+                    path.put(n, actual);
+                    queue.add(n);
+                    generated++;
+                }
+            }
+        }
+        return "Failure";
+    }
+    
+    public String solution(GeoNode start, GeoNode dest, HashMap<GeoNode, GeoNode> path, String info)
     {
         LinkedList<GeoNode> nodes = new LinkedList<GeoNode>();
         nodes.add(dest);
         GeoNode current = dest;
         String result = "";
+        long pathNodes = 0;
         while(current != start)
         {
             current = path.get(current);
             nodes.add(current);
+            pathNodes++;
         }
         for (int i = 0; i < nodes.size(); i++) 
         {    
@@ -122,7 +224,7 @@ public class Main
             if(i < nodes.size() - 1)
                 result += ",";
         }
-        return result;
+        return result + "|" + info + ", Path Nodes : " + pathNodes;
     }
     
     public void importNodeCoordinates(Document doc) throws IOException 

@@ -31,7 +31,8 @@ public class ShortestPathServlet extends HttpServlet
         double lon1 = Double.valueOf(request.getParameter("lon1"));
         double lat2 = Double.valueOf(request.getParameter("lat2"));
         double lon2 = Double.valueOf(request.getParameter("lon2"));
-        String solution = main.shortestPath(lat1, lon1, lat2, lon2);
+        String algorithm = String.valueOf(request.getParameter("algorithm"));
+        String solution = main.shortestPath(lat1, lon1, lat2, lon2, algorithm);
 
         response.getWriter().write(solution);
     }
