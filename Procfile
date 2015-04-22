@@ -1,1 +1,1 @@
-worker: sh target/bin/worker
+web: java $JAVA_OPTS -cp target/classes:target/dependency/* ShortestPathServlet
