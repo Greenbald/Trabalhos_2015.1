@@ -1,1 +1,1 @@
-web: java -cp target/classes:target/dependency/* ShortestPathServlet
+web: sh target/bin/MapsWeb
