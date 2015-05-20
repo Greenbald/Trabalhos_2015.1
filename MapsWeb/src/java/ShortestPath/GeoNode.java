@@ -15,7 +15,7 @@ public class GeoNode implements Comparable<GeoNode>
     private long id;  /* This is an identifier for a way*/
     private double d;
     private double f;
-    LinkedList<GeoNode> connected;
+    private LinkedList<GeoNode> connected;
     public GeoNode(double lat, double lon)
     {
         this.connected = new LinkedList<GeoNode>();

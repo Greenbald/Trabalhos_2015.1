@@ -1,48 +1,8 @@
-Execution time(ms) : 2, Distance : 2.064891145724747, Generated Nodes : 165, Path Nodes : 46
-Execution time(ms) : 27, Distance : 2.064891145724747, Generated Nodes : 1026, Path Nodes : 46
+-22.881802904989065, -43.08579352416928 : -22.894770844761474, -43.07892706909156
 
-Execution time(ms) : 0, Distance : 0.806047234299728, Generated Nodes : 53, Path Nodes : 23
-Execution time(ms) : 0, Distance : 0.806047234299728, Generated Nodes : 200, Path Nodes : 23
+Execution time(ms) : 5, Distance(km) : 2.6660779576527167, Generated Nodes : 621, Path Nodes : 74
+Execution time(ms) : 723, Distance(km) : 2.803404898610391, Generated Nodes : 16608, Path Nodes : 72
+Execution time(ms) : 49, Distance(km) : 2.6660779576527167, Generated Nodes : 2116, Path Nodes : 74
 
-Execution time(ms) : 0, Distance : 2.148460206017439, Generated Nodes : 121, Path Nodes : 40
-Execution time(ms) : 17, Distance : 2.148460206017439, Generated Nodes : 1554, Path Nodes : 40
+-22.88169948608846 , -43.08155339213039 : -22.9062110310598, -43.06198399515795
 
-Execution time(ms) : 3, Distance : 2.7094194818380535, Generated Nodes : 579, Path Nodes : 35
-Execution time(ms) : 27, Distance : 2.2871138458207474, Generated Nodes : 2032, Path Nodes : 35
-
-Execution time(ms) : 2, Distance : 3.9699943173237484, Generated Nodes : 495, Path Nodes : 79
-Execution time(ms) : 43, Distance : 4.060384580062898, Generated Nodes : 2820, Path Nodes : 79
-
-Execution time(ms) : 123, Distance : 10.15994747120741, Generated Nodes : 5645, Path Nodes : 227
-Execution time(ms) : 447, Distance : 8.175138388773798, Generated Nodes : 11865, Path Nodes : 227
-
-Execution time(ms) : 24, Distance : 9.039644335887196, Generated Nodes : 5004, Path Nodes : 232
-Execution time(ms) : 481, Distance : 9.039644335887196, Generated Nodes : 12769, Path Nodes : 232
-
-Execution time(ms) : 51, Distance : 16.353528399163643, Generated Nodes : 9721, Path Nodes : 392
-Execution time(ms) : 1026, Distance : 16.663200805621276, Generated Nodes : 18648, Path Nodes : 392
-
-
-
-
-Execution time(ms) : 2, Distance(km) : 2.191227784593636, Generated Nodes : 251, Path Nodes : 55
-Execution time(ms) : 156, Distance(km) : 2.191227784593636, Generated Nodes : 7328, Path Nodes : 52
-Execution time(ms) : 28, Distance(km) : 2.191227784593636, Generated Nodes : 1409, Path Nodes : 55
-
-
-
-Execution time(ms) : 30, Distance(km) : 5.49361207086905, Generated Nodes : 1530, Path Nodes : 122
-Execution time(ms) : 2290, Distance(km) : 5.49361207086905, Generated Nodes : 61808, Path Nodes : 121
-Execution time(ms) : 175, Distance(km) : 5.49361207086905, Generated Nodes : 6944, Path Nodes : 122
-
-
-Execution time(ms) : 99, Distance(km) : 8.031886401990068, Generated Nodes : 5092, Path Nodes : 225
-Execution time(ms) : 1476, Distance(km) : 8.031886401990068, Generated Nodes : 62812, Path Nodes : 169
-Execution time(ms) : 320, Distance(km) : 8.031886401990068, Generated Nodes : 10137, Path Nodes : 225
-/*
-
-
-1. Esconder a mensagem após resetar. OK
-2. Tirar o fundo vermelho. OK
-3. Mudar a linha no mapa para vermelho. OK
-4. Implementar breadth-search. OK

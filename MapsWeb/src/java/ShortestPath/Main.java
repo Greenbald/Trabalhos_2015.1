@@ -70,6 +70,8 @@ public class Main
                 return uniformCostSearch(a,b);
         else if(algorithm.equals("breadthFirstSearch"))
                 return breadthFirstSearch(a,b);
+        else if(algorithm.equals("simulatedAnnealing"))
+                return simulatedAnnealing(a, b);
         return "Failure";
     }
     
@@ -205,6 +207,70 @@ public class Main
         return "Failure";
     }
     
+    public String simulatedAnnealing(GeoNode start, GeoNode dest)
+    {
+        long started = System.currentTimeMillis();
+        HashMap<GeoNode, GeoNode> path = new HashMap<>();
+        start.setDistance(0);
+        start.setFunction(0 + start.distanceFrom(dest));
+        GeoNode actualNode = start;
+        GeoNode nextNode;
+        int generated = 0;
+        do
+        {
+            nextNode = simulated_annealing(actualNode, dest, 50);
+            path.put(nextNode, actualNode);
+            generated++;
+        }while(nextNode != dest);
+        long time = System.currentTimeMillis() - started;
+        return solution(start, dest, path, "Execution time(ms) : " + time +
+                                ", Distance(km) : " + dest.getDistance() + 
+                                ", Generated Nodes : "  + generated);
+    }
+    public GeoNode simulated_annealing(GeoNode node, GeoNode dest, int kMax)
+    {
+        /* kMax needs to be at least 1 
+           otherwise it will not work.
+        */
+        double T = temp_function(node, dest);
+        int k = 0;
+        GeoNode next = null, current = node;
+        fillHeuristic(node, dest);
+        while( k < kMax)
+        {
+            if(T < 0.100)
+                return dest;
+            next = getSuccessor(node);
+            double DeltaE = next.getFunction() - node.getFunction();
+            if(DeltaE > 0)
+                current = next;
+            else
+            {
+                if(Math.exp(DeltaE/T) > Math.random())
+                    current = next;
+            }
+            k++;
+        }   
+        return next;
+    }
+    public double temp_function(GeoNode node, GeoNode dest)
+    {
+        return node.distanceFrom(dest);
+    }
+    
+    public void fillHeuristic(GeoNode node, GeoNode dest)
+    {
+        for (GeoNode n : node.getConnections()) 
+        {
+            n.setDistance(node.getDistance() + node.distanceFrom(n));
+            n.setFunction(n.getDistance() + n.distanceFrom(dest));
+        }
+    }
+    public GeoNode getSuccessor(GeoNode node) /* works */
+    {
+        int i = (int) ((int)(node.getConnections().size() - 1)*Math.random());
+        return node.getConnections().get(i);
+    }
     public String solution(GeoNode start, GeoNode dest, HashMap<GeoNode, GeoNode> path, String info)
     {
         LinkedList<GeoNode> nodes = new LinkedList<GeoNode>();
