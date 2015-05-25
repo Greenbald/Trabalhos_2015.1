@@ -70,8 +70,8 @@ public class Main
                 return uniformCostSearch(a,b);
         else if(algorithm.equals("breadthFirstSearch"))
                 return breadthFirstSearch(a,b);
-        else if(algorithm.equals("simulatedAnnealing"))
-                return simulatedAnnealing(a, b);
+        else if(algorithm.equals("hillClimbing"))
+                return hillClimbing(a, b);
         return "Failure";
     }
 
@@ -207,7 +207,7 @@ public class Main
         return "Failure";
     }
 
-    public String simulatedAnnealing(GeoNode start, GeoNode dest)
+    public String hillClimbing(GeoNode start, GeoNode dest)
     {
         long started = System.currentTimeMillis();
         HashMap<GeoNode, GeoNode> path = new HashMap<>();
@@ -220,7 +220,7 @@ public class Main
         do
         {
             fillHeuristic(actualNode, dest);
-            nextNode = simulated_annealing(actualNode, dest, 30, explored);
+            nextNode = hill_climbing(actualNode, dest, 30, explored);
             if(nextNode == null)
                 actualNode = path.get(actualNode);
             else
@@ -233,38 +233,31 @@ public class Main
         }while(actualNode != dest && actualNode != null);
         if(actualNode == null) return "Failure";
         long time = System.currentTimeMillis() - started;
-        return solution(start, dest, path, "Execution time(ms) : " + time +
-                                ", Distance(km) : " + dest.getDistance());
+        return solution(start, dest, path, "Execution time(ms) : " + time);
     }
-    public GeoNode simulated_annealing(GeoNode node, GeoNode dest, int kMax, LinkedList<GeoNode> explored)
+    public GeoNode hill_climbing(GeoNode node, GeoNode dest, int kMax, LinkedList<GeoNode> explored)
     {
-        double T = 0, TMin = temp_function(node, dest);
+        double value = 0; /*TMin = temp_function(node, dest);*/
+        double valueMin = Double.MAX_VALUE;
         int k = 0;
         GeoNode actualNode = null, possibleNode = node;
         while( k < kMax )
         {
             possibleNode = getSuccessor(node);
-            T = temp_function(possibleNode, dest);
-            if(T < 0.100)
+            value = calculateValue(possibleNode, dest);
+            if(value < 0.030)
                 return dest;
             
-            //double p = Math.exp(-0.5*kMax/k);
-            double test = Math.random();
-            if(T < TMin && !explored.contains(possibleNode))
+            if(value < valueMin && !explored.contains(possibleNode))
             {
                 actualNode = possibleNode;
-                TMin = T;
+                valueMin = value;
             }
-//            else
-//            {
-//                if(p > test)
-//                    actualNode = possibleNode;
-//            }
             k++;
         }
         return actualNode;
     }
-    public double temp_function(GeoNode node, GeoNode dest)
+    public double calculateValue(GeoNode node, GeoNode dest)
     {
         return node.distanceFrom(dest);
     }

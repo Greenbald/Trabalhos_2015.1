@@ -50,8 +50,8 @@ var calculate = function() {
                     algorithm = "uniformCostSearch";
                 else if($('#breadthFirstSearch').is(':checked'))
                     algorithm = "breadthFirstSearch";
-                else if($('#simulatedAnnealing').is(':checked'))
-                    algorithm = "simulatedAnnealing";
+                else if($('#hillClimbing').is(':checked'))
+                    algorithm = "hillClimbing";
 		$.ajax({
 			url: "ShortestPath?",
 			data: {"lon1" : tempStart.x, "lat1" : tempStart.y, "lon2" : tempEnd.x, "lat2" : tempEnd.y, "algorithm" : algorithm},
@@ -175,7 +175,7 @@ Select the Algorithm : </br>
 <input type="radio" name="radio" id="aStar" value="aStar" checked/> A* Algorithm
 <input type="radio" name="radio" id="breadthFirstSearch" value="breadthFirstSearch"/> Breadth First Search Algorithm
 <input type="radio" name="radio" id="uniformCostSearch" value="uniformCostSearch" required/> Uniform Cost Search Algorithm
-<input type="radio" name="radio" id="simulatedAnnealing" value="simulatedAnnealing" required/> Simulated Annealing </br>
+<input type="radio" name="radio" id="hillClimbing" value="hillClimbing" required/> Hill Climbing </br>
 <button onclick="calculate()">Calculate(C)</button> 
 <button type="button" onclick="reset()">Reset(R)</button>
 <p id="executionTime" style="display: none"></p>
