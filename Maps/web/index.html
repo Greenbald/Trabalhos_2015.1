@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+<script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+var map;
+var mainLayer;
+var markers;
+var lines;
+var width;
+var height;
+var fromProjection;
+var toProjection
+
+var startPoint;
+var endPoint;
+
+function init() {
+	resize();
+	setupMap();
+	reset();
+	addEvent(window, "resize", resize);
+	map.events.register("click", map, clickMarker);
+}
+
+var reset = function() {
+	startPoint = [];
+	endPoint = [];
+	markers.clearMarkers();
+	lines.destroyFeatures();
+        $("#executionTime").hide();
+}
+
+var calculate = function() {
+	if(lines.features.length > 0) {
+		lines.destroyFeatures();
+	}
+	if(endPoint.length == 2) {
+		var tempStart = new OpenLayers.Geometry.Point(startPoint[0], startPoint[1]).transform( toProjection, fromProjection);
+		var tempEnd = new OpenLayers.Geometry.Point(endPoint[0], endPoint[1]).transform( toProjection, fromProjection);
+                var algorithm;
+                if($('#aStar').is(':checked'))
+                    algorithm = "aStar";
+                else if($('#uniformCostSearch').is(':checked'))
+                    algorithm = "uniformCostSearch";
+                else if($('#breadthFirstSearch').is(':checked'))
+                    algorithm = "breadthFirstSearch";
+                else if($('#simulatedAnnealing').is(':checked'))
+                    algorithm = "simulatedAnnealing";
+		$.ajax({
+			url: "ShortestPath?",
+			data: {"lon1" : tempStart.x, "lat1" : tempStart.y, "lon2" : tempEnd.x, "lat2" : tempEnd.y, "algorithm" : algorithm},
+			success: function(data){
+                    parseCoordinates(data);
+                }
+		});
+	}
+}
+
+var addMarker = function(lon, lat) {
+	switch(markers.markers.length) {
+    case 0:
+        startPoint = [lon, lat];
+        markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(lon, lat).transform(fromProjection, toProjection)));
+		break;
+    case 1:
+        endPoint = [lon, lat];
+		markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(lon, lat).transform(fromProjection, toProjection)));
+        break;
+	}
+}
+
+var parseCoordinates = function(coordinateString) {
+        var info = coordinateString.split("|")[1];
+        $("#executionTime").text(info);
+        $("#executionTime").css({"font-weight" : "bolder"});
+        $("#executionTime").show("slow");
+        coordinateString = coordinateString.split("|")[0];
+	var coordinateStrings = coordinateString.split(",");
+	var coordinates = [];
+	for(i = 0; i < coordinateStrings.length; i++) {
+		coordinates.push(parseFloat(coordinateStrings[i]));
+	}
+	drawLine(coordinates);
+}
+
+var drawLine = function(coordinates) {
+	var points = [];
+	points.push(new OpenLayers.Geometry.Point(startPoint[0], startPoint[1]));
+	for(i = 0; i < coordinates.length/2; i++) {
+		points.push(new OpenLayers.Geometry.Point(coordinates[2*i+1], coordinates[2*i]).transform(fromProjection, toProjection));
+	}
+	points.push(new OpenLayers.Geometry.Point(endPoint[0], endPoint[1]));
+	var line = new OpenLayers.Geometry.LineString(points);
+	var lineFeature = new OpenLayers.Feature.Vector(line, null, lineStyle);
+	lines.addFeatures([lineFeature]);
+}
+
+var lineStyle = { 
+  strokeColor: '#ff0000', 
+  strokeOpacity: 0.5,
+  strokeWidth: 4
+};
+
+var clickMarker = function(e) {
+	var position = map.getLonLatFromPixel(e.xy);
+	switch(markers.markers.length) {
+    case 0:
+        startPoint = [position.lon, position.lat];
+        markers.addMarker(new OpenLayers.Marker(position));
+		break;
+    case 1:
+        endPoint = [position.lon, position.lat];
+		markers.addMarker(new OpenLayers.Marker(position));
+        break;
+	}
+}
+
+var addEvent = function(elem, type, eventHandle) {
+    if (elem == null || typeof(elem) == 'undefined') return;
+    if ( elem.addEventListener ) {
+        elem.addEventListener( type, eventHandle, false );
+    } else if ( elem.attachEvent ) {
+        elem.attachEvent( "on" + type, eventHandle );
+    } else {
+        elem["on"+type]=eventHandle;
+    }
+};
+
+var resize = function() {
+	width = window.innerWidth.toString() + "px";
+	height = window.innerHeight.toString() + "px";
+	document.getElementById('map').style.height = height;
+	document.getElementById('map').style.width = width;
+}
+
+var setupMap = function() {
+	map = new OpenLayers.Map('map');
+	mainLayer = new OpenLayers.Layer.OSM("MAP"); 
+	markers = new OpenLayers.Layer.Markers( "Marker layer" );
+	lines = new OpenLayers.Layer.Vector("Line layer"); 
+	map.addLayers([mainLayer, markers, lines]);
+	
+	fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
+    toProjection   = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
+    //var defautPos  = new OpenLayers.LonLat(24.796,58.745).transform( fromProjection, toProjection);
+	//map.setCenter(defautPos, 8);
+    map.zoomToExtent(new OpenLayers.Bounds(-43.1354, -22.9581, -42.9404, -22.8553 ).transform( fromProjection, toProjection), true);
+}
+
+$(document).keydown(function(e) {
+    switch(e.which) {
+        case 82: // R
+			reset();
+        case 67: // C
+			calculate();
+        break;
+
+        default: return; // exit this handler for other keys
+    }
+    e.preventDefault(); // prevent the default action (scroll / move caret)
+});
+	
+</script>
+</head>
+
+<body onload="init()">
+<b>Select two points on the map by clicking(Only in Niteroi city). Reset the points by clicking "Reset" or pressing "R".</b> </br> </br>
+Select the Algorithm : </br>
+<input type="radio" name="radio" id="aStar" value="aStar" checked/> A* Algorithm
+<input type="radio" name="radio" id="breadthFirstSearch" value="breadthFirstSearch"/> Breadth First Search Algorithm
+<input type="radio" name="radio" id="uniformCostSearch" value="uniformCostSearch" required/> Uniform Cost Search Algorithm
+<input type="radio" name="radio" id="simulatedAnnealing" value="simulatedAnnealing" required/> Simulated Annealing </br>
+<button onclick="calculate()">Calculate(C)</button> 
+<button type="button" onclick="reset()">Reset(R)</button>
+<p id="executionTime" style="display: none"></p>
+<div id="map" style="width: 800px; height: 600px"></div>
+
+</body>
+</html>
