@@ -214,45 +214,55 @@ public class Main
         start.setDistance(0);
         start.setFunction(0 + start.distanceFrom(dest));
         GeoNode actualNode = start;
+        LinkedList<GeoNode> explored = new LinkedList<>();
+        explored.add(start);
         GeoNode nextNode;
-        int generated = 0;
         do
         {
             fillHeuristic(actualNode, dest);
-            nextNode = simulated_annealing(actualNode, dest, 30);
-            path.put(nextNode, actualNode);
-            actualNode = nextNode;
-            generated++;
-        }while(actualNode != dest);
-        long time = System.currentTimeMillis() - started;
-        return solution(start, dest, path, "Execution time(ms) : " + time +
-                                ", Distance(km) : " + dest.getDistance() +
-                                ", Generated Nodes : "  + generated);
-    }
-    public GeoNode simulated_annealing(GeoNode node, GeoNode dest, int kMax)
-    {
-        /* kMax needs to be at least 1
-           otherwise it will not work.
-        */
-        double T = temp_function(node, dest);
-        int k = 0;
-        GeoNode next = null, current = node;
-        while( k < kMax)
-        {
-            if(T < 0.100)
-                return dest;
-            next = getSuccessor(node);
-            double DeltaE = next.getFunction() - node.getFunction();
-            if(DeltaE > 0)
-                current = next;
+            nextNode = simulated_annealing(actualNode, dest, 30, explored);
+            if(nextNode == null)
+                actualNode = path.get(actualNode);
             else
             {
-                if(Math.exp(DeltaE/T) > Math.random())
-                    current = next;
+                explored.add(nextNode);
+                path.put(nextNode, actualNode);
+                actualNode = nextNode;
             }
+            
+        }while(actualNode != dest && actualNode != null);
+        if(actualNode == null) return "Failure";
+        long time = System.currentTimeMillis() - started;
+        return solution(start, dest, path, "Execution time(ms) : " + time +
+                                ", Distance(km) : " + dest.getDistance());
+    }
+    public GeoNode simulated_annealing(GeoNode node, GeoNode dest, int kMax, LinkedList<GeoNode> explored)
+    {
+        double T = 0, TMin = temp_function(node, dest);
+        int k = 0;
+        GeoNode actualNode = null, possibleNode = node;
+        while( k < kMax )
+        {
+            possibleNode = getSuccessor(node);
+            T = temp_function(possibleNode, dest);
+            if(T < 0.100)
+                return dest;
+            
+            //double p = Math.exp(-0.5*kMax/k);
+            double test = Math.random();
+            if(T < TMin && !explored.contains(possibleNode))
+            {
+                actualNode = possibleNode;
+                TMin = T;
+            }
+//            else
+//            {
+//                if(p > test)
+//                    actualNode = possibleNode;
+//            }
             k++;
         }
-        return next;
+        return actualNode;
     }
     public double temp_function(GeoNode node, GeoNode dest)
     {
