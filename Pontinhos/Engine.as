@@ -56,7 +56,7 @@
 			Constants.NUMBER_OF_DOTS = 8;
 			Constants.SCREEN_HEIGHT = stage.stageHeight;
 			Constants.SCREEN_WIDTH = stage.stageWidth;
-			Constants.DOT_SIZE = (new Dot()).width;
+			Constants.DOT_SIZE = (new DotAsset()).width;
 		}
 	}
 	

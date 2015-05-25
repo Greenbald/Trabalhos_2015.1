@@ -1,11 +1,14 @@
-﻿package  {
-	
-	public class Player {
-
-		public function Player() {
-			// constructor code
+﻿package  
+{	
+	public class Player 
+	{
+		public function Player() 
+		{
+			
 		}
-
+		public function move_()
+		{
+			
+		}
 	}
-	
 }
