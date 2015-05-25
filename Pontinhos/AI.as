@@ -1,11 +1,11 @@
-﻿package  {
-	
-	public class AI {
-
-		public function AI() {
-			// constructor code
+﻿package  
+{
+	import Player;	
+	public class AI extends Player
+	{
+		public function AI() 
+		{
+			
 		}
-
 	}
-	
 }
