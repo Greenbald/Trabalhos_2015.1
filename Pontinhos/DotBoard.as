@@ -11,9 +11,11 @@
 		private var scorePane:ScorePane;
 		private var player1:Player;
 		private var player2:Player;
+		private var color:Boolean;
 		private var clicks:int;
 		private var clickedDots:Array;
-		private var graphNumber = 0;
+		private var geometric:Array;
+		private var bButton:BackButton;
 		
 		public function DotBoard(player1:Player , player2:Player) 
 		{
@@ -23,12 +25,16 @@
 			clicks = 0;
 			setupScorePane();
 			setupDots();
+			setupBackButton();
+			color = true;
+			geometric = new Array();
+			geometric.push(bButton, scorePane);
 		}
 		private function setupScorePane()
 		{
 			scorePane = new ScorePane();
-			scorePane.player1.text = "00";
-			scorePane.player2.text = "00";
+			scorePane.player1.text = "0";
+			scorePane.player2.text = "0";
 			addChild(scorePane);
 		}
 		private function setupDots()
@@ -54,9 +60,16 @@
 				}
 			}
 		}
+		private function setupBackButton()
+		{
+			bButton = new BackButton();
+			bButton.addEventListener(MouseEvent.MOUSE_DOWN, goBackToMenu);
+			bButton.x = Constants.SCREEN_WIDTH/2 -  bButton.width/2;
+			bButton.y = 580;
+			addChild(bButton);
+		}
 		public function onClickDot(e:Event)
 		{
-			var color = true;
 			changeDotColor(Dot(e.currentTarget));
 			clicks++;
 			clickedDots.push(e.currentTarget);
@@ -69,6 +82,7 @@
 					connect(clickedDots[0], clickedDots[1], color);
 					removeListenerIfMaxNeighbours(clickedDots[0], clickedDots[1]);
 					drawSquareIfClosed(clickedDots[0], clickedDots[1], color);
+					color = !color;
 					trace("Dot 1 Neighbours : "+clickedDots[0].getNumberOfNeighbours());
 					trace("Dot 2 Neighbours : "+clickedDots[1].getNumberOfNeighbours());
 				}
@@ -144,9 +158,19 @@
 				square = new BlueSquare();
 			else
 				square = new RedSquare();
-			square.x = originNode.x + Constants.DOT_SIZE + 3;
-			square.y = originNode.y + Constants.DOT_SIZE + 3;
+			square.x = originNode.x + (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - square.width/2;
+			square.y = originNode.y + (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - square.height/2;
+			refreshScore(color);
 			addChild(square);
+			geometric.push(square);
+			
+		}
+		public function refreshScore(color:Boolean)
+		{
+			if(color)
+				scorePane.player1.text = String(parseInt(scorePane.player1.text) + 1);
+			else
+				scorePane.player2.text = String(parseInt(scorePane.player2.text) + 1);
 		}
 		public function refreshDotColors(dotNode1:Dot, dotNode2:Dot)
 		{
@@ -174,11 +198,11 @@
 				haste = new BlueHaste();
 			else
 				haste = new RedHaste();
-				
+			var h = (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - (haste.width > haste.height ? haste.width : haste.height)/2
 			if(dot1.i == dot2.i)
 			{
 				haste.x = dot1.x < dot2.x ? dot1.x : dot2.x;
-				haste.x += Constants.DOT_SIZE + 3;
+				haste.x += h;
 				haste.y = dot1.y;
 			}
 			else
@@ -186,9 +210,25 @@
 				haste.rotation += 90;
 				haste.x = dot1.x + haste.width;
 				haste.y = dot1.y < dot2.y ? dot1.y : dot2.y;
-				haste.y += Constants.DOT_SIZE + 3;
+				haste.y += h;
 			}
 			addChild(haste);
+			geometric.push(haste);
+		}
+		public function goBackToMenu(e:Event)
+		{
+			for(var i:int = 0; i < geometric.length; i++)
+				removeChild(geometric[i]);
+			for(var k:int = 0; k < dots.length; k++)
+			{
+				for(var j:int = 0; j < dots[k].length; j++)
+				{
+					dots[k][j].removeChildrens();
+					dots[k][j].removeEventListener(MouseEvent.MOUSE_DOWN, onClickDot);
+				}
+			}
+			bButton.removeEventListener(MouseEvent.MOUSE_DOWN, goBackToMenu);
+			dispatchEvent(new Event(Constants.GO_BACK_MENU_EVENT));
 		}
 	}
 }
