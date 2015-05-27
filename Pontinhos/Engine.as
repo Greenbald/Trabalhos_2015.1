@@ -57,6 +57,7 @@
 			Constants.SCREEN_HEIGHT = stage.stageHeight;
 			Constants.SCREEN_WIDTH = stage.stageWidth;
 			Constants.DOT_SIZE = (new DotAsset()).width;
+			Constants.DOT_MAX_NEIGHBOURS = 4;
 		}
 	}
 	
