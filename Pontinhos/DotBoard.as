@@ -81,8 +81,9 @@
 					drawLine(clickedDots[0], clickedDots[1], color);
 					connect(clickedDots[0], clickedDots[1], color);
 					removeListenerIfMaxNeighbours(clickedDots[0], clickedDots[1]);
-					drawSquareIfClosed(clickedDots[0], clickedDots[1], color);
-					color = !color;
+					if(!drawSquareIfClosed(clickedDots[0], clickedDots[1], color))
+						color = !color;
+					
 					trace("Dot 1 Neighbours : "+clickedDots[0].getNumberOfNeighbours());
 					trace("Dot 2 Neighbours : "+clickedDots[1].getNumberOfNeighbours());
 				}
@@ -106,7 +107,7 @@
 			if(dot2.getNumberOfNeighbours() == Constants.DOT_MAX_NEIGHBOURS)
 				dot2.removeEventListener(MouseEvent.MOUSE_DOWN, onClickDot);
 		}
-		public function drawSquareIfClosed(dot1:Dot, dot2:Dot, color:Boolean)
+		public function drawSquareIfClosed(dot1:Dot, dot2:Dot, color:Boolean):Boolean
 		{
 			if(dot1.i == dot2.i)
 			{
@@ -117,7 +118,10 @@
 					top2 = dot2.isConnectedTo(dot2.i - 1, dot2.j);
 					
 					if(top1 != null && top2 != null && top1.isConnectedToB(top2))
-					   drawSquare(top1.j > top2.j ? top2 : top1, color);
+					{
+					   drawSquare(top1.j > top2.j ? top2 : top1, color); 
+					   return true;
+					}
 				}
 				if(dot1.i != Constants.NUMBER_OF_DOTS - 1)
 				{
@@ -126,7 +130,10 @@
 					down2 = dot2.isConnectedTo(dot2.i + 1, dot2.j);
 					
 					if(down1 != null && down2 != null && down1.isConnectedToB(down2))
-					   drawSquare(dot1.j > dot2.j ? dot2 : dot1, color);
+					{
+					   drawSquare(dot1.j > dot2.j ? dot2 : dot1, color); 
+					   return true;
+					}
 				}
 			}
 			else
@@ -138,7 +145,10 @@
 					left2 = dot2.isConnectedTo(dot2.i, dot2.j - 1);
 					
 					if(left1 != null && left2 != null && left1.isConnectedToB(left2))
-					   drawSquare(left1.i > left2.i ? left2 : left1, color);
+					{
+					   drawSquare(left1.i > left2.i ? left2 : left1, color); 
+					   return true;
+					}
 				}
 				if(dot1.j != Constants.NUMBER_OF_DOTS - 1)
 				{
@@ -147,9 +157,13 @@
 					right2 = dot2.isConnectedTo(dot2.i, dot2.j + 1);
 					
 					if(right1 != null && right2 != null && right1.isConnectedToB(right2))
-					   drawSquare(dot1.i > dot2.i ? dot2 : dot1, color);
+					{
+					   drawSquare(dot1.i > dot2.i ? dot2 : dot1, color); 
+					   return true;
+					}
 				}
 			}
+			return false;
 		}
 		public function drawSquare(originNode:Dot, color:Boolean)
 		{

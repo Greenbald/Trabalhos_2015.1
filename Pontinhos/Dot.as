@@ -20,6 +20,10 @@
 		{
 			this.addChild(this.dot);
 		}
+		public function removeChildrens()
+		{
+			this.removeChild(this.dot);
+		}
 		public function addEdge(connectedDot:Dot, color:Boolean)
 		{
 			var edge = new Edge(connectedDot, color);

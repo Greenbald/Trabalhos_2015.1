@@ -10,5 +10,6 @@
 		public static var DOT_MAX_NEIGHBOURS:int;
 		/* This is set in setupDots() in DotBoard class */
 		public static var DOT_DISTANCE:int;
+		public static var GO_BACK_MENU_EVENT:String = "GO_BACK_MENU_EVENT";
 	}
 }
