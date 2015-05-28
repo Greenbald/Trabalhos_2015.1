@@ -109,6 +109,7 @@
 		}
 		public function drawSquareIfClosed(dot1:Dot, dot2:Dot, color:Boolean):Boolean
 		{
+			var ret = false;
 			if(dot1.i == dot2.i)
 			{
 				if(dot1.i != 0 && dot2.i != 0)
@@ -120,7 +121,7 @@
 					if(top1 != null && top2 != null && top1.isConnectedToB(top2))
 					{
 					   drawSquare(top1.j > top2.j ? top2 : top1, color); 
-					   return true;
+					   ret = true;
 					}
 				}
 				if(dot1.i != Constants.NUMBER_OF_DOTS - 1)
@@ -132,7 +133,7 @@
 					if(down1 != null && down2 != null && down1.isConnectedToB(down2))
 					{
 					   drawSquare(dot1.j > dot2.j ? dot2 : dot1, color); 
-					   return true;
+					   ret = true;
 					}
 				}
 			}
@@ -147,7 +148,7 @@
 					if(left1 != null && left2 != null && left1.isConnectedToB(left2))
 					{
 					   drawSquare(left1.i > left2.i ? left2 : left1, color); 
-					   return true;
+					   ret = true;
 					}
 				}
 				if(dot1.j != Constants.NUMBER_OF_DOTS - 1)
@@ -159,11 +160,11 @@
 					if(right1 != null && right2 != null && right1.isConnectedToB(right2))
 					{
 					   drawSquare(dot1.i > dot2.i ? dot2 : dot1, color); 
-					   return true;
+					   ret = true;
 					}
 				}
 			}
-			return false;
+			return ret;
 		}
 		public function drawSquare(originNode:Dot, color:Boolean)
 		{
