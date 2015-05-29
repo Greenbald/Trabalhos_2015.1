@@ -11,5 +11,6 @@
 		/* This is set in setupDots() in DotBoard class */
 		public static var DOT_DISTANCE:int;
 		public static var GO_BACK_MENU_EVENT:String = "GO_BACK_MENU_EVENT";
+		public static var CONNECT_DOTS_EVENT:String = "CONNECT_DOTS_EVENT";
 	}
 }

@@ -24,22 +24,24 @@
 		public function eventHandler(e:Event)
 		{
 			var string:String = trim(e.target.text);
+			/* Player 1 is always true */
+			var color:Boolean = Math.random() > Math.random() ? true : false;
 			removeChild(menu);
 			removeListeners();
 			switch(string)
 			{
 				case "One Player":
-					dotBoard = new DotBoard(new Player(), new AI());
+					dotBoard = new DotBoard(new Player(color), new AI(!color));
 					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
 					addChild(dotBoard);
 					break;
 				case "Two Players":
-					dotBoard = new DotBoard(new Player(), new Player());
+					dotBoard = new DotBoard(new Player(color), new Player(!color));
 					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
 					addChild(dotBoard);
 					break;
 				case "AI Game":
-					dotBoard = new DotBoard(new AI(), new AI());
+					dotBoard = new DotBoard(new AI(color), new AI(!color));
 					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
 					addChild(dotBoard);
 					break;
