@@ -12,5 +12,6 @@
 		public static var DOT_DISTANCE:int;
 		public static var GO_BACK_MENU_EVENT:String = "GO_BACK_MENU_EVENT";
 		public static var CONNECT_DOTS_EVENT:String = "CONNECT_DOTS_EVENT";
+		public static var GAME_OVER_EVENT:String = "GAME_OVER_EVENT";
 	}
 }

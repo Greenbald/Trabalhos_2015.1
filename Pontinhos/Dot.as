@@ -24,9 +24,9 @@
 		{
 			this.removeChild(this.dot);
 		}
-		public function addEdge(connectedDot:Dot, color:Boolean)
+		public function addEdge(dot:Dot, connectedDot:Dot, color:Boolean)
 		{
-			var edge = new Edge(connectedDot, color);
+			var edge = new Edge(dot, connectedDot);
 			this.edges.push(edge);
 		}
 		public function getNumberOfNeighbours():int
@@ -41,7 +41,7 @@
 		{
 			for(var n in edges)
 			{
-				if(edges[n].connectedDot == dot)
+				if(edges[n].getConnectedDot() == dot)
 					return true;
 			}
 			return false;
@@ -50,8 +50,8 @@
 		{
 			for(var n in edges)
 			{
-				if(edges[n].connectedDot.i == i && edges[n].connectedDot.j == j)
-				   return edges[n].connectedDot;
+				if(edges[n].getConnectedDot().i == i && edges[n].getConnectedDot().j == j)
+				   return edges[n].getConnectedDot();
 			}
 			return null;
 		}

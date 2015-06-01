@@ -3,12 +3,45 @@
 	import Dot;
 	public class Edge 
 	{
-		public var connectedDot:Dot;
-		public var color:Boolean;
-		public function Edge(dot2:Dot, color:Boolean) 
+		private var dot1:Dot;
+		private var dot2:Dot;
+		private var color:Boolean;
+		private var visited:Boolean;
+		private var heuristic:int;
+		public function Edge(dot1, dot2:Dot) 
 		{
-			this.connectedDot = dot2;
+			this.dot1 = dot1;
+			this.dot2 = dot2;
 			this.color = color;
+			this.heuristic = -1;
+		}
+		public function getDot():Dot
+		{
+			return this.dot1;
+		}
+		public function getConnectedDot():Dot
+		{
+			return this.dot2;
+		}
+		public function getColor():Boolean
+		{
+			return this.color;
+		}
+		public function setVisited(val:Boolean)
+		{
+			this.visited = val;
+		}
+		public function gotVisited():Boolean
+		{
+			return this.visited;
+		}
+		public function setHeuristic(h:int)
+		{
+			this.heuristic = h;
+		}
+		public function getHeuristic():int
+		{
+			return this.heuristic;
 		}
 	}	
 }

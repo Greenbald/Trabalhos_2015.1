@@ -16,21 +16,23 @@
 		
 		public function DotBoard(player1:Player , player2:Player) 
 		{
-			setupPlayers(player1, player2);
-			setupScorePane();
+			/* The order here is important */
 			setupDots();
+			setupPlayers(player1, player2, dots);
+			setupScorePane();
 			setupBackButton();
 			geometricAssets = new Array();
 			geometricAssets.push(bButton, scorePane);
-			startGame();
 		}
-		private function setupPlayers(player1:Player , player2:Player)
+		private function setupPlayers(player1:Player , player2:Player, dots:Array)
 		{
 			this.player1 = player1;
 			this.player2 = player2;
 			this.player1.addEventListener(Constants.CONNECT_DOTS_EVENT, connectDots);
 			this.player1.addAdversary(player2);
 			this.player2.addAdversary(player1);
+			this.player1.init(dots);
+			this.player2.init(dots)
 		}
 		private function setupScorePane()
 		{
@@ -56,7 +58,7 @@
 			var min = Constants.SCREEN_WIDTH > Constants.SCREEN_HEIGHT ? Constants.SCREEN_WIDTH : Constants.SCREEN_HEIGHT;
 			var space:int = (min - Constants.NUMBER_OF_DOTS*Constants.DOT_SIZE)/ (Constants.NUMBER_OF_DOTS + 2);
 			Constants.DOT_DISTANCE = space;
-			var menu:int = 120;
+			var scorePane:int = 120;
 			for(var i:int = 0; i < Constants.NUMBER_OF_DOTS; i++)
 			{
 				dots[i] = new Array(Constants.NUMBER_OF_DOTS);
@@ -65,7 +67,7 @@
 					/* Dot is an object from points.fla's library. */
 					dots[i][j] = new Dot(i,j, new DotAsset(), -1);
 					dots[i][j].x = j*space + space;
-					dots[i][j].y = i*space + space + menu;
+					dots[i][j].y = i*space + space + scorePane;
 					dots[i][j].addEventListener(MouseEvent.MOUSE_DOWN, onClickDot);
 					dots[i][j].addChildren();
 					addChild(dots[i][j]);
@@ -81,12 +83,9 @@
 			bButton.y = 580;
 			addChild(bButton);
 		}
-		public function startGame()
-		{
-			
-		}
 		public function connectDots(e:Event)
 		{
+			var moveAgain:Boolean = false;
 			var player:Player = Player(e.target);
 			var adversary:Player = player.getAdversary();
 			var clickedDots = player.getClickedDots();
@@ -97,14 +96,24 @@
 				removeListenerIfMaxNeighbours(clickedDots[0], clickedDots[1]);
 				if(!drawSquareIfClosed(clickedDots[0], clickedDots[1], player))
 					swapTurns(player, adversary);
-				checkGameIsOver();
+				else
+					moveAgain = true;
+				if(gameOver())
+				{
+					goBackToMenu();
+					return;
+				}
 				trace("Dot 1 Neighbours : " + clickedDots[0].getNumberOfNeighbours());
 				trace("Dot 2 Neighbours : " + clickedDots[1].getNumberOfNeighbours());
 			}
 			refreshDotColors(clickedDots[0], clickedDots[1]);
 			player.refreshDots();
+			if(moveAgain)
+				player.canMove();
+			else
+				adversary.canMove();
 		}
-		public function onClickDot(e:Event)
+		public function onClickDot(e:Event = null)
 		{
 			var dot:Dot = Dot(e.currentTarget);
 			var player:Player = getPlayer();
@@ -161,8 +170,8 @@
 		}
 		public function connect(dot1:Dot, dot2:Dot, player:Player)
 		{
-			dot1.addEdge(dot2, player.getColor());
-			dot2.addEdge(dot1, player.getColor());
+			dot1.addEdge(dot1, dot2, player.getColor());
+			dot2.addEdge(dot2, dot1, player.getColor());
 		}
 		public function removeListenerIfMaxNeighbours(dot1:Dot, dot2:Dot)
 		{
@@ -237,6 +246,8 @@
 				square = new BlueSquare();
 			else
 				square = new RedSquare();
+			square.width = Constants.DOT_DISTANCE - Constants.DOT_SIZE;
+			square.height = square.width;
 			square.x = originNode.x + (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - square.width/2;
 			square.y = originNode.y + (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - square.height/2;
 			refreshScore(player);
@@ -265,9 +276,32 @@
 			}
 			scorePaneMessage();
 		}
-		public function checkGameIsOver()
+		public function gameOver()
 		{
-			/* IMPLEMENT */
+			var dots = this.dots;
+			for(var i:int = 0; i < dots.length; i++)
+			{
+				for(var j:int = 0; j < dots[i].length; j++)
+				{
+					if((i == 0 && j == 0) ||
+					   (i == Constants.NUMBER_OF_DOTS - 1 && j == Constants.NUMBER_OF_DOTS - 1) ||
+					   (i == Constants.NUMBER_OF_DOTS - 1 && j == 0) ||
+					   (i == 0 && j == Constants.NUMBER_OF_DOTS - 1))
+				    {
+					    if(dots[i][j].getNumberOfNeighbours() != 2)
+					   	    return false;
+				    }
+					else if((i == 0 || i == Constants.NUMBER_OF_DOTS - 1)
+					   || (j == 0 || j == Constants.NUMBER_OF_DOTS - 1))
+					{
+					 	if(dots[i][j].getNumberOfNeighbours() != 3)
+							return false;
+					}
+					else if(dots[i][j].getNumberOfNeighbours() != 4)
+						return false;
+				}
+			}
+			return true;
 		}
 		
 		
@@ -278,7 +312,7 @@
 			if(dotNode2 != null)
 				dotNode2.dot.gotoAndStop(1);
 		}
-		public function goBackToMenu(e:Event)
+		public function goBackToMenu(e:Event = null)
 		{
 			for(var i:int = 0; i < geometricAssets.length; i++)
 				removeChild(geometricAssets[i]);

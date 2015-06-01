@@ -16,6 +16,11 @@
 			this.playerColor = playerColor;
 			clickedDots = new Array();
 		}
+		
+		/* Abstract function here */
+		public function init(dots:Array){} 
+		public function canMove(){}
+		
 		public function move_(dot:Dot)
 		{
 			clickedDots.push(dot);
@@ -24,6 +29,7 @@
 		}
 		public function getClickedDots():Array
 		{
+			/* It returns 2 dots only if refreshDots() was not called */
 			return this.clickedDots;
 		}
 		public function refreshDots()
@@ -44,5 +50,6 @@
 		{
 			return this.adversary;
 		}
+		
 	}
 }
