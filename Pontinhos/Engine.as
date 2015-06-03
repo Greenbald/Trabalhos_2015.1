@@ -6,49 +6,32 @@
 	import flash.desktop.NativeApplication;
 	import Constants;
 	import DotBoard;
+	import ScreenController;
 	public class Engine extends MovieClip
 	{
 		private var dotBoard:DotBoard;
-		private var menu:MenuScreen;
+		public var menu:MenuScreen;
+		private var screenController:ScreenController;
 		public function Engine() 
 		{
+			screenStack = new Array();
 			setupConstants();
-			setupMenu();
+			screenController = new ScreenController(menu);
+			screenController.setupMenu();
+			screenController.addEventListener(Constants.CHANGE_SCREEN_EVENT, changeScreen);
 		}
-		public function setupMenu()
-		{
-			menu = new MenuScreen();
-			addEventListeners();
-			addChild(menu);
-		}
-		public function eventHandler(e:Event)
+		public function changeScreen(e:Event)
 		{
 			var string:String = trim(e.target.text);
 			/* Player 1 is always true */
 			var color:Boolean = Math.random() > Math.random() ? true : false;
-			removeChild(menu);
-			removeListeners();
-			switch(string)
-			{
-				case "One Player":
-					dotBoard = new DotBoard(new Player(color), new AI(!color));
-					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
-					addChild(dotBoard);
-					break;
-				case "Two Players":
-					dotBoard = new DotBoard(new Player(color), new Player(!color));
-					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
-					addChild(dotBoard);
-					break;
-				case "AI Game":
-					dotBoard = new DotBoard(new AI(color), new AI(!color));
-					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
-					addChild(dotBoard);
-					break;
-				case "Exit":
-					NativeApplication.nativeApplication.exit(); 
-					break;
-			}
+			var screen = screenController.getActualScreen();
+			addChild(screen);
+			/*removeChild(getActualScreen(screenStack));
+			screenStack.push(screenController.getScreen(string, color));
+			screenStack.addEventListener(Constants.GO_BACK_EVENT, removeActualScreen);
+			screenStack.addEventListener(Constants.GO_BACK_MENU_EVENT, goBackMenu);
+			addChild(getActualScreen(screenStack));*/
 		}
 		function trim(s:String):String
 		{
@@ -62,26 +45,17 @@
 			Constants.DOT_SIZE = (new DotAsset()).width;
 			Constants.DOT_MAX_NEIGHBOURS = 4;
 		}
-		public function removeGame(e:Event)
+		public function removeActualScreen(e:Event)
 		{
-			removeChild(dotBoard);
-			addEventListeners();
-			addChild(menu);
+			removeChild(getActualScreen(screenStack));
+			removeActualScreen(screenStack);
+			addChild(getActualScreen(screenStack));
 		}
-		public function removeListeners()
+		public function goBackMenu(e:Event)
 		{
-			menu.exitGame.removeEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
-			menu.twoPlayerGame.removeEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
-			menu.onePlayerGame.removeEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
-			menu.AIGame.removeEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
-		}
-		public function addEventListeners()
-		{
-			menu.exitGame.addEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
-			menu.twoPlayerGame.addEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
-			menu.onePlayerGame.addEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
-			menu.AIGame.addEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
+			removeChild(getActualScreen(screenStack));
+			removeAllScreensButMenu(screenStack);
+			addChild(getActualScreen(screenStack));
 		}
 	}
-	
 }

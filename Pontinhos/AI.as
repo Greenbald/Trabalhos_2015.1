@@ -60,10 +60,7 @@
 			/* terminal node here */
 			var e = getTerminalEdgeIfExists(edges);
 			if(e != null)
-			{
-				e.setHeuristic(heuristic(e));
 				return e;
-			}
 			
 			if(maximizingPlayer)
 			{
@@ -80,7 +77,6 @@
 							break;
 					}
 				}
-				v.setHeuristic(heuristic(v));
 				return v;
 				
 			}
@@ -99,7 +95,6 @@
 							break;
 					}
 				}
-				g.setHeuristic(heuristic(g));
 				return g;
 			}
 		}
@@ -136,6 +131,8 @@
 				node2 = node1.j > node2.j ? node1 : node2;
 				node1 = min;
 				
+				/* false means HORIZONTAL */
+				
 				/* Check for a square above the haste */ 
 				if(node1.i > 0  && 
 				   node1.isConnectedToB(dots[node1.i-1][node1.j]) &&
@@ -157,15 +154,14 @@
 					if(node2.i > 0)
 					{
 						if(dots[node1.i-1][j].isConnectedToB(dots[node1.i-1][j+1]))
-							heurValue += int(Constants.IA_HEURISTIC*Math.random());
+							heurValue += int(10*Math.random());
 					}
 					if(node2.i < Constants.NUMBER_OF_DOTS - 1)
 					{
 						if(dots[node2.i+1][j].isConnectedToB(dots[node2.i+1][j+1]))
-							heurValue += int(Constants.IA_HEURISTIC*Math.random());
+							heurValue += int(10*Math.random());
 					}
 				}
-				/* false means HORIZONTAL */
 				if(checkFutureSquare(node1, node2, false))
 					return int.MIN_VALUE;
 			}
@@ -175,6 +171,8 @@
 				var min2 = node1.i < node2.i ? node1 : node2;
 				node2 = node1.i > node2.i ? node1 : node2;
 				node1 = min2;
+				
+				/* true means it's VERTICAL */
 				
 				/* Check for a square left the haste */
 				if(node1.j > 0 &&
@@ -190,22 +188,21 @@
 				   return int.MAX_VALUE;
 				   
 				if(node1.j == 0 || node1.j == Constants.NUMBER_OF_DOTS - 1)
-					heurValue += int(Constants.IA_HEURISTIC*Math.random());
+					heurValue += int(10*Math.random());
 				var i:int = node1.i > 0 ? node1.i - 1 : 0;
 				for(; (i < node2.i + 1) && (i < Constants.NUMBER_OF_DOTS - 1); i++)
 				{
 					if(node1.j > 0)
 					{
 						if(dots[i][node1.j-1].isConnectedToB(dots[i+1][node1.j-1]))
-						   	heurValue += int(5*Math.random());
+						   	heurValue += int(10*Math.random());
 					}
 					if(node2.j < Constants.NUMBER_OF_DOTS - 1)
 					{
 						if(dots[i][node2.j+1].isConnectedToB(dots[i+1][node1.j+1]))
-						   heurValue += int(Constants.IA_HEURISTIC*Math.random());
+						   heurValue += int(10*Math.random());
 					}
 				}
-				/* true means it's VERTICAL */
 				if(checkFutureSquare(node1, node2, true))
 					return int.MIN_VALUE;
 			}
