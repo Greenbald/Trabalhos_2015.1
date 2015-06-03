@@ -1,0 +1,247 @@
+[33mcommit 6b6b74e6c7e483d00017bfa0ade727edb2258aa9[m[33m ([1;36mHEAD[m[33m, [1;31morigin/master[m[33m, [1;31morigin/HEAD[m[33m, [1;32mmaster[m[33m, [1;32mIADev[m[33m)[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon Jun 1 22:03:27 2015 -0300
+
+    Medium AI
+    
+    AI can now think better, about future squares.
+
+[33mcommit eee37ada9af58404eceb38ae666d12a5232269c1[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon Jun 1 21:43:56 2015 -0300
+
+    AI improved
+    
+    The AI can now recognize the square he can complete now, always. But
+    still can't predict the square will be completed in the next round by
+    the opponent.
+
+[33mcommit 5ded5a47725472e236107251f647a527b2c2d3e2[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon Jun 1 18:04:44 2015 -0300
+
+    AI is now working in a poor mode.
+    
+    The AI is dumb;
+
+[33mcommit 001106a347c0f1fecfbdc34f3ed5a793b45c89c1[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Fri May 29 14:53:47 2015 -0300
+
+    Jogo foi remodelado para adaptação a IA
+
+[33mcommit c353b0db0b29d89736184dbef02fbc7924b88314[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Wed May 27 22:54:23 2015 -0300
+
+    Problem with double square is working
+
+[33mcommit 54cbcd32ae6d929a10786c7c296e7e8c6623e15d[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Wed May 27 21:14:51 2015 -0300
+
+    Who marks the square gains one more round
+
+[33mcommit fd692b7c8048af35e2d30ed268c1a55dd66ccbde[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Wed May 27 20:56:51 2015 -0300
+
+    Jogo funcional para dois jogadores.
+    
+    Ainda não computa quando é o afim da partida.
+
+[33mcommit c368cf66116f0b3f99abcd3c1fcd24ebf20dd467[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Wed May 27 19:47:54 2015 -0300
+
+    The game is drawing squares and hastes.
+    
+    With different colors.
+
+[33mcommit 18c0fd24dc582e74d9c4657bf95a0e26c2f57227[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon May 25 20:42:27 2015 -0300
+
+    The game is drawing hastes.
+    
+    When the person selects two adjacent dots, the game draw a haste. It's
+    still not computing scores.
+
+[33mcommit 299f38cdb87d610ac83ee7d23f44fdd345904813[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon May 25 17:32:35 2015 -0300
+
+    Game is functional but is not playable yet.
+    
+    1. Menu implemented.
+    2. Board implemented.
+
+[33mcommit d698642630087ee98e2fb22cda32084bfcf33a36[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon May 25 02:57:12 2015 -0300
+
+    Adicionando projeto do jogo ao repositório e finalizando o hill climbing.
+
+[33mcommit a90779aa29287e9e1bd6d25be80aa2f28ec1f4ed[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon May 25 02:11:01 2015 -0300
+
+    o Simulated Annealing está funcionando mais ou menos.
+    
+    Para distâncias pequenas ele consegue traçar a rota. Algumas distâncias
+    simplesmente não funcionam, isso ocorre quando não existe T nos vizinhos
+    que seja menor do que o seu próprio T
+
+[33mcommit d534be5271231ba63187f2fa989403124745a6de[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Sun May 24 21:42:08 2015 -0300
+
+    Adicionando a pasta web para o projeto.
+
+[33mcommit 1e50d7f628ab17de91389e2a0275d1fecbec08e9[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Sun May 24 21:39:49 2015 -0300
+
+    Adicionando novo projeto, semelhante ao MapsWeb.
+
+[33mcommit aeb2bb021e5837702455e577a77a4632833f2c27[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Wed May 20 18:13:10 2015 -0300
+
+    Implantação e teste do simulated annealing
+
+[33mcommit 6fce431a0d895a8cb0e61aa87a84bbdf9cec65a5[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 21:50:06 2015 -0300
+
+    asdsa
+
+[33mcommit c74b839bc8d84ddab287c4f9ace22626fd97b307[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 21:46:06 2015 -0300
+
+    asdsa
+
+[33mcommit 6e63d80cabf3d7c280ed2e6c5ce4365b4cfa7499[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 21:37:31 2015 -0300
+
+    asdads
+
+[33mcommit ad534b17db3875742c94078a8d1193c0de3961db[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 21:35:27 2015 -0300
+
+    asdds
+
+[33mcommit 4df04c1846c59ae5bb335fbd59a61f27c61b90b2[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 21:29:05 2015 -0300
+
+    dsa
+
+[33mcommit b70afda560e1a83e8f7f78e7ac31e1e89808b6fe[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 21:27:23 2015 -0300
+
+    ads
+
+[33mcommit 4d88a7fd7c87437c6ad71934fd67b316c1588b30[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 21:17:46 2015 -0300
+
+    drop the ".txt"
+
+[33mcommit 3b6aa55723826cf3a0facb7ab5e8f77f731c79cf[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 21:14:15 2015 -0300
+
+    adding procfile
+
+[33mcommit 76dbee9caf86f6fa198acdd99d89288617175ee7[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 21:07:04 2015 -0300
+
+    Adding pom.xml
+
+[33mcommit 7539620283c6624a398cd44aefb2c43200e2218c[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 19:32:54 2015 -0300
+
+    Breadth first search, uniform cost.
+    
+    Breadth first search and uniform cost implemented.
+
+[33mcommit 6cfc8da79c83c0341ecbb32c54365e06d096481e[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 12:26:45 2015 -0300
+
+    x\zxcz
+
+[33mcommit e1b7031da07034f81b792be4d8a24d2de3e7cb70[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Tue Apr 21 12:21:41 2015 -0300
+
+    pom.xml
+
+[33mcommit 244b56a75a1eb5868e49574b58c061c1f02db7dd[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon Apr 20 17:18:48 2015 -0300
+
+    App working.
+
+[33mcommit 631c3e6949f493cae569fec818e88b0a57c1a82c[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon Apr 13 22:22:06 2015 -0300
+
+    Nodes and ways are downloading now.
+    
+    Given a lat,long from the start point and the destination point, we
+    already calculate the nodes and ways between them.
+
+[33mcommit 4bb046011ee9c13927ceebcbe2ad63acf60afa69[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon Apr 13 19:03:53 2015 -0300
+
+    You can now pin the address in the map.
+    
+    inputs are now available, the algorithm is still pending.
+    Inputs now show properly the marks in the map.
+
+[33mcommit eb451cf245e2df1adfc1073270ef36f50ca68211[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon Apr 13 14:33:58 2015 -0300
+
+    Form validation done.
+    
+    The form is already sending the data to a function in javascript to
+    calculate the shortest path.
+
+[33mcommit 3efc8aa44a776f82856afb6d2ecdc42b7177c876[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Mon Apr 13 00:26:16 2015 -0300
+
+    Page with map embedded created
+    
+    The page, css, map and everything is settle, now i must implement the
+    algorithm and draw part in the map.
+
+[33mcommit b709425c8c7ad919552e15ff42b54cacc4a3b193[m
+Author: Paulo Roberto Mann Marques Júnior <paulomann@id.uff.br>
+Date:   Sun Apr 12 18:59:19 2015 -0300
+
+    shortest_path created
+    
+    This is the first work to make in AI
+
+[33mcommit b3be667e42e3fb74a9ec926dd96904c04eded323[m
+Author: Paulo Roberto Mann Marques Júnior <Greenbald@users.noreply.github.com>
+Date:   Sun Apr 12 18:52:22 2015 -0300
+
+    Update README.md
+
+[33mcommit ca0b87ee9264574340289319366b96ca75655839[m
+Author: Paulo Roberto Mann Marques Júnior <Greenbald@users.noreply.github.com>
+Date:   Sun Apr 12 18:50:53 2015 -0300
+
+    Initial commit
