@@ -100,7 +100,7 @@
 					moveAgain = true;
 				if(gameOver())
 				{
-					goBackToMenu();
+					gameOverScreen(player);
 					return;
 				}
 				trace("Dot 1 Neighbours : " + clickedDots[0].getNumberOfNeighbours());
@@ -303,7 +303,21 @@
 			}
 			return true;
 		}
-		
+		public function gameOverScreen(player:Player)
+		{
+			var gameOverScreen = new GameOverScreen();
+			var msg = player.getColor() ? "Red Win!" : "Blue Win" 
+			if(parseInt(scorePane.player1.text) ==  parseInt(scorePane.player2.text))
+				msg = "Draw!";
+			gameOverScreen.winner.text = msg;
+			msg = parseInt(scorePane.player1.text) > parseInt(scorePane.player2.text) ? scorePane.player1.text : scorePane.player2.text;
+			msg += " x "
+			msg += parseInt(scorePane.player1.text) < parseInt(scorePane.player2.text) ? scorePane.player1.text : scorePane.player2.text
+			gameOverScreen.score.text = msg;
+			addChild(gameOverScreen);
+			setChildIndex(bButton, this.numChildren-1);
+			
+		}
 		
 		public function refreshDotColors(dotNode1:Dot, dotNode2:Dot = null)
 		{

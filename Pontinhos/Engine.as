@@ -10,10 +10,12 @@
 	{
 		private var dotBoard:DotBoard;
 		private var menu:MenuScreen;
+		private var difficultyScreen;
 		public function Engine() 
 		{
 			setupConstants();
 			setupMenu();
+			difficultyScreen = new DifficultyScreen();
 		}
 		public function setupMenu()
 		{
@@ -31,9 +33,12 @@
 			switch(string)
 			{
 				case "One Player":
-					dotBoard = new DotBoard(new Player(color), new AI(!color));
+					difficultyScreen.medium.addEventListener(MouseEvent.MOUSE_DOWN, medium);
+					difficultyScreen.expert.addEventListener(MouseEvent.MOUSE_DOWN, expert);
+					addChild(difficultyScreen);
+					/*dotBoard = new DotBoard(new Player(color), new AI(!color));
 					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
-					addChild(dotBoard);
+					addChild(dotBoard);*/
 					break;
 				case "Two Players":
 					dotBoard = new DotBoard(new Player(color), new Player(!color));
@@ -56,7 +61,7 @@
 		}
 		public function setupConstants()
 		{
-			Constants.NUMBER_OF_DOTS = 8;
+			Constants.NUMBER_OF_DOTS = 3;
 			Constants.SCREEN_HEIGHT = stage.stageHeight;
 			Constants.SCREEN_WIDTH = stage.stageWidth;
 			Constants.DOT_SIZE = (new DotAsset()).width;
@@ -74,6 +79,8 @@
 			menu.twoPlayerGame.removeEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
 			menu.onePlayerGame.removeEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
 			menu.AIGame.removeEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
+			difficultyScreen.medium.removeEventListener(MouseEvent.MOUSE_DOWN, medium);
+			difficultyScreen.expert.removeEventListener(MouseEvent.MOUSE_DOWN, expert);
 		}
 		public function addEventListeners()
 		{
@@ -82,6 +89,23 @@
 			menu.onePlayerGame.addEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
 			menu.AIGame.addEventListener(MouseEvent.MOUSE_DOWN, eventHandler);
 		}
+		public function medium(e:Event)
+		{
+			var color:Boolean = Math.random() > Math.random() ? true : false;
+			Constants.AI_HEURISTIC = 10;
+			removeChild(difficultyScreen);
+			dotBoard = new DotBoard(new Player(color), new AI(!color));
+			dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
+			addChild(dotBoard);
+		}
+		public function expert(e:Event)
+		{
+			var color:Boolean = Math.random() > Math.random() ? true : false;
+			Constants.AI_HEURISTIC = 4;
+			removeChild(difficultyScreen);
+			dotBoard = new DotBoard(new Player(color), new AI(!color));
+			dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
+			addChild(dotBoard);
+		}
 	}
-	
 }
