@@ -151,12 +151,14 @@
 				haste = new BlueHaste();
 			else
 				haste = new RedHaste();
+			haste.width = Constants.DOT_DISTANCE - Constants.DOT_SIZE;
+			haste.height = Constants.DOT_SIZE + 10;
 			var h = (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - (haste.width > haste.height ? haste.width : haste.height)/2
 			if(dot1.i == dot2.i)
 			{
-				haste.x = dot1.x < dot2.x ? dot1.x : dot2.x;
+				haste.x = dot1.x < dot2.x ? dot1.x : dot2.x ;
 				haste.x += h;
-				haste.y = dot1.y;
+				haste.y = dot1.y - 4;
 			}
 			else
 			{
@@ -246,7 +248,7 @@
 				square = new BlueSquare();
 			else
 				square = new RedSquare();
-			square.width = Constants.DOT_DISTANCE - Constants.DOT_SIZE;
+			square.width = Constants.DOT_DISTANCE - Constants.DOT_SIZE - 7;
 			square.height = square.width;
 			square.x = originNode.x + (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - square.width/2;
 			square.y = originNode.y + (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - square.height/2;
