@@ -147,26 +147,29 @@
 		{
 			/* We suppose a haste with fixed size of 30, for a dot of size 15x15 */
 			var haste;
-			if(player.getColor())
-				haste = new BlueHaste();
-			else
-				haste = new RedHaste();
-			haste.width = Constants.DOT_DISTANCE - Constants.DOT_SIZE;
-			haste.height = Constants.DOT_SIZE + 10;
-			var h = (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - (haste.width > haste.height ? haste.width : haste.height)/2
+			var h_width = Constants.DOT_DISTANCE - Constants.DOT_SIZE;
+			var h_height = Constants.DOT_SIZE + 10;
+			var h = (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - (h_width > h_height ? h_width : h_height)/2
 			if(dot1.i == dot2.i)
 			{
+				haste = new BlueHaste();
+				haste.width = h_width;
+				haste.height = h_height;
 				haste.x = dot1.x < dot2.x ? dot1.x : dot2.x ;
 				haste.x += h;
 				haste.y = dot1.y - 4;
 			}
 			else
 			{
-				haste.rotation += 90;
-				haste.x = dot1.x + haste.width;
+				haste = new RedHaste();
+				haste.width = h_height;
+				haste.height = h_width;
+				//haste.rotation += 90;
+				haste.x = dot1.x - 3; //+ h_width;
 				haste.y = dot1.y < dot2.y ? dot1.y : dot2.y;
 				haste.y += h;
 			}
+			
 			addChild(haste);
 			geometricAssets.push(haste);
 		}
