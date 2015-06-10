@@ -55,6 +55,7 @@
 				edges[i].setHeuristic(acHeur);
 			}
 		}
+		//I'm going to change you
 		private function miniMax(edges:Array, alfa:int, beta:int, maximizingPlayer:Boolean):Edge
 		{
 			/* terminal node here */
