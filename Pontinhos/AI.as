@@ -65,13 +65,13 @@
 			var e = getTerminalEdgeIfExists(edges);
 			if(e != null)
 			{
-				//e.setHeuristic(heuristic(e));
+				e.setHeuristic(heuristic(e));
 				return e;
 			}
 			
 			if(maximizingPlayer)
 			{
-				var v = getMax(edges);
+				var v = getMin(edges);
 				for(var i:int = 0; i < edges.length; i++)
 				{
 					if(!edges[i].gotVisited())
@@ -80,19 +80,21 @@
 						var mmax = miniMax(edges, alfa, beta, false);
 						edges[i].setVisited(false);
 						v =  v.getHeuristic() > mmax.getHeuristic() ? v : mmax;
+						trace(v.getHeuristic(), " Dot1", "i :", v.getDot().i, ", j :" ,v.getDot().j);
+						trace(v.getHeuristic(), " Dot2", "i :", v.getConnectedDot().i, ", j :", v.getConnectedDot().j);
 						alfa = v.getHeuristic() > alfa ? v.getHeuristic() : alfa;
 						if(beta < alfa)
 							break;
 					}
 				}
 				v.setVisited(true);
-				/*addEdgeToBoard(v);
-				v.setHeuristic(heuristic(v));*/
+				/*addEdgeToBoard(v);*/
+				/*v.setHeuristic(heuristic(v));*/
 				return v;
 			}
 			else
 			{
-				var g = getMin(edges);
+				var g = getMax(edges);
 				for(var j:int = 0; j < edges.length; j++)
 				{
 					if(!edges[j].gotVisited())
@@ -101,14 +103,16 @@
 						var mmin = miniMax(edges, alfa, beta, true);
 						edges[i].setVisited(false);
 						g = g.getHeuristic() > mmin.getHeuristic() ? mmin : g;
+						trace(g.getHeuristic(), " Dot1", "i :", g.getDot().i, ", j :" ,g.getDot().j);
+						trace(g.getHeuristic(), " Dot2", "i :", g.getConnectedDot().i, ", j :", g.getConnectedDot().j);
 						beta = g.getHeuristic() > beta ? beta : g.getHeuristic();
 						if(beta < alfa)
 							break;
 					}
 				}
 				g.setVisited(true);
-				/*addEdgeToBoard(g);
-				g.setHeuristic(heuristic(g));*/
+				/*addEdgeToBoard(g);*/
+				/*g.setHeuristic(heuristic(g));*/
 				return g;
 			}
 		}
@@ -240,15 +244,15 @@
 							node2.isConnectedToB(dots[node2.i][node2.j-1]))
 						return true;
 				}
-				else if(node1.j < Constants.NUMBER_OF_DOTS - 1)
+				if(node1.j < Constants.NUMBER_OF_DOTS - 1)
 				{
 					if(node1.isConnectedToB(dots[node1.i][node1.j+1]) &&
 					   dots[node1.i][node1.j+1].isConnectedToB(dots[node2.i][node2.j+1]))
 					   	return true;
-					else if(node1.isConnectedToB(dots[node2.i][node2.j+1]) &&
+					else if(node2.isConnectedToB(dots[node2.i][node2.j+1]) &&
 							dots[node2.i][node2.j+1].isConnectedToB(dots[node1.i][node1.j+1]))
 						return true;
-					else if(node1.isConnectedToB(dots[node2.i][node2.j+1]) &&
+					else if(node2.isConnectedToB(dots[node2.i][node2.j+1]) &&
 							node1.isConnectedToB(dots[node1.i][node1.j+1]))
 						return true;
 				}
