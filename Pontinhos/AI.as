@@ -7,6 +7,7 @@
 	public class AI extends Player
 	{
 		private var dots:Array;
+		private var overlayEdges:Array;
 		public function AI(playerColor:Boolean) 
 		{
 			super(playerColor);
@@ -19,9 +20,12 @@
 		
 		override public function canMove()
 		{
+			overlayEdges = new Array();
 			var possibleEdges = getAllPossibleEdges();
 			setAllHeuristics(possibleEdges);
+			possibleEdges.sortOn("heuristic", Array.DESCENDING);
 			var edge = miniMax(possibleEdges, int.MIN_VALUE, int.MAX_VALUE, true);
+			removeOverlayEdges();
 			clickedDots = new Array(edge.getDot(), edge.getConnectedDot());
 			dispatchEvent(new Event(Constants.CONNECT_DOTS_EVENT));
 		}
@@ -55,14 +59,13 @@
 				edges[i].setHeuristic(acHeur);
 			}
 		}
-		//I'm going to change you
 		private function miniMax(edges:Array, alfa:int, beta:int, maximizingPlayer:Boolean):Edge
 		{
 			/* terminal node here */
 			var e = getTerminalEdgeIfExists(edges);
 			if(e != null)
 			{
-				e.setHeuristic(heuristic(e));
+				//e.setHeuristic(heuristic(e));
 				return e;
 			}
 			
@@ -75,15 +78,17 @@
 					{
 						edges[i].setVisited(true);
 						var mmax = miniMax(edges, alfa, beta, false);
+						edges[i].setVisited(false);
 						v =  v.getHeuristic() > mmax.getHeuristic() ? v : mmax;
 						alfa = v.getHeuristic() > alfa ? v.getHeuristic() : alfa;
-						if(beta <= alfa)
+						if(beta < alfa)
 							break;
 					}
 				}
-				v.setHeuristic(heuristic(v));
+				v.setVisited(true);
+				/*addEdgeToBoard(v);
+				v.setHeuristic(heuristic(v));*/
 				return v;
-				
 			}
 			else
 			{
@@ -92,17 +97,26 @@
 				{
 					if(!edges[j].gotVisited())
 					{
-						edges[j].setVisited(true);
+						edges[i].setVisited(true);
 						var mmin = miniMax(edges, alfa, beta, true);
+						edges[i].setVisited(false);
 						g = g.getHeuristic() > mmin.getHeuristic() ? mmin : g;
 						beta = g.getHeuristic() > beta ? beta : g.getHeuristic();
-						if(beta <= alfa)
+						if(beta < alfa)
 							break;
 					}
 				}
-				g.setHeuristic(heuristic(g));
+				g.setVisited(true);
+				/*addEdgeToBoard(g);
+				g.setHeuristic(heuristic(g));*/
 				return g;
 			}
+		}
+		private function addEdgeToBoard(e:Edge)
+		{
+			overlayEdges.push(e);
+			dots[e.getDot().i][e.getDot().j].addEdge(e.getDot(), e.getConnectedDot(), true);
+			dots[e.getConnectedDot().i][e.getConnectedDot().j].addEdge(e.getConnectedDot(), e.getDot(), true);
 		}
 		private function getTerminalEdgeIfExists(edges:Array):Edge
 		{
@@ -166,7 +180,6 @@
 							heurValue += int(Constants.AI_HEURISTIC*Math.random());
 					}
 				}
-				/* false means HORIZONTAL */
 				if(checkFutureSquare(node1, node2, false))
 					return int.MIN_VALUE;
 			}
@@ -206,7 +219,6 @@
 						   heurValue += int(Constants.AI_HEURISTIC*Math.random());
 					}
 				}
-				/* true means it's VERTICAL */
 				if(checkFutureSquare(node1, node2, true))
 					return int.MIN_VALUE;
 			}
@@ -277,9 +289,9 @@
 				min = edges[0];
 			else 
 				return null;
-			for(var i:int = 1; i < edges.length; i++)
+			for(var i:int = edges.length - 1; i >= 0 ; i--)
 			{
-				if(min.getHeuristic() > edges[i].getHeuristic())
+				if(min.getHeuristic() > edges[i].getHeuristic() && !edges[i].gotVisited())
 					min = edges[i];
 			}
 			return min;
@@ -293,10 +305,18 @@
 				return null;
 			for(var i:int = 1; i < edges.length; i++)
 			{
-				if(max.getHeuristic() < edges[i].getHeuristic())
+				if(max.getHeuristic() < edges[i].getHeuristic() && !edges[i].gotVisited())
 					max = edges[i];
 			}
 			return max;
+		}
+		private function removeOverlayEdges()
+		{
+			for(var i:int = 0; i < overlayEdges.length; i++)
+			{
+				dots[overlayEdges[i].getDot().i][overlayEdges[i].getDot().j].removeEdge(overlayEdges[i].getDot(), overlayEdges[i].getConnectedDot());
+				dots[overlayEdges[i].getConnectedDot().i][overlayEdges[i].getConnectedDot().j].removeEdge(overlayEdges[i].getConnectedDot(), overlayEdges[i].getDot());
+			}
 		}
 	}
 }

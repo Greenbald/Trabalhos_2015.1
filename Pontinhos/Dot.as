@@ -29,6 +29,27 @@
 			var edge = new Edge(dot, connectedDot);
 			this.edges.push(edge);
 		}
+		public function removeEdge(dot:Dot, connectedDot:Dot)
+		{
+			for(var n in edges)
+			{
+				if(edges[n].getDot() == dot && edges[n].getConnectedDot() == connectedDot)
+				{
+					removeEdg(n);
+					break;
+				}
+			}
+		}
+		public function removeEdg(n:int)
+		{
+			var v = new Array();
+			for(var i:int = 0; i < this.edges.length; i++)
+			{
+				if(i != n)
+					v.push(this.edges[i]);
+			}
+			this.edges = v;
+		}
 		public function getNumberOfNeighbours():int
 		{
 			return this.edges.length;
