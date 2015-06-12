@@ -61,7 +61,7 @@
 		}
 		public function setupConstants()
 		{
-			Constants.NUMBER_OF_DOTS = 3;
+			Constants.NUMBER_OF_DOTS = 2;
 			Constants.SCREEN_HEIGHT = stage.stageHeight;
 			Constants.SCREEN_WIDTH = stage.stageWidth;
 			Constants.DOT_SIZE = (new DotAsset()).width;

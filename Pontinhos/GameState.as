@@ -36,7 +36,7 @@
 					}
 					if(i < Constants.NUMBER_OF_DOTS - 1)
 					{
-						if(!this.board[i][j].isConnectedTo(i, j+1))
+						if(!this.board[i][j].isConnectedTo(i+1, j))
 							edges.push(new Edge(this.board[i][j], this.board[i+1][j]));
 					}
 				}
@@ -57,14 +57,14 @@
 					arr.push(legalMoves[i]);
 			}
 			legalMoves = arr;
-			board[e.getDot().i][e.getDot().j].removeEdge(e.getDot(), e.getConnectedDot());
-			board[e.getConnectedDot().i][e.getConnectedDot().j].removeEdge(e.getConnectedDot(), e.getDot());
+			board[e.getDot().i][e.getDot().j].addEdge(e.getDot(), e.getConnectedDot(), true);
+			board[e.getConnectedDot().i][e.getConnectedDot().j].addEdge(e.getConnectedDot(), e.getDot(), true);
 		}
 		public function removeHaste(e:Edge)
 		{
 			legalMoves.push(e);
-			board[e.getDot().i][e.getDot().j].addEdge(e.getDot(), e.getConnectedDot(), true);
-			board[e.getConnectedDot().i][e.getConnectedDot().j].addEdge(e.getConnectedDot(), e.getDot(), true);
+			board[e.getDot().i][e.getDot().j].removeEdge(e.getDot(), e.getConnectedDot());
+			board[e.getConnectedDot().i][e.getConnectedDot().j].removeEdge(e.getConnectedDot(), e.getDot());
 		}
 		public function cloneGameState()
 		{

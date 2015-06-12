@@ -23,7 +23,8 @@
 			var gameState = new GameState(dots);
 			gameState = alphabeta(gameState, int.MIN_VALUE, int.MAX_VALUE, true);
 			var edge = gameState.getSolution();
-			clickedDots = new Array(edge.getDot(), edge.getConnectedDot());
+			clickedDots = new Array(dots[edge.getDot().i][edge.getDot().j]
+									, dots[edge.getConnectedDot().i][edge.getConnectedDot().j]);
 			dispatchEvent(new Event(Constants.CONNECT_DOTS_EVENT));
 		}
 		private function alphabeta(gameState:GameState, alfa:int, beta:int, maximizingPlayer:Boolean):GameState
