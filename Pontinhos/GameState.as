@@ -11,38 +11,53 @@
 		private var bestHaste:Edge
 		public function GameState(dots:Array) 
 		{
-			board = new Array();
-			for(var i:int = 0; i < dots[0].length; i++)
+			board = new Array(Constants.NUMBER_OF_DOTS);
+			for(var i:int = 0; i < Constants.NUMBER_OF_DOTS; i++)
 			{
-				board.push(dots[i].slice(0));
+				board[i] = new Array();
+				for(var j:int = 0; j < Constants.NUMBER_OF_DOTS; j++)
+				{
+					board[i].push(dots[i][j].clone());
+				}
 			}
-			legalMoves = initLegalMoves();
+			legalMoves = connectEdges(dots);
 		}
-		public function getState():Array
-		{
-			return this.board;
-		}
-		private function initLegalMoves():Array
+		public function connectEdges(dots:Array)
 		{
 			var edges = new Array();
-			for(var i:int = 0; i < this.board.length; i++)
+			for(var i:int = 0; i < dots.length; i++)
 			{
-				for(var j:int = 0; j < this.board[i].length; j++)
+				for(var j:int = 0; j < dots[i].length; j++)
 				{
 					if(j < Constants.NUMBER_OF_DOTS - 1)
 					{
-						if(!this.board[i][j].isConnectedTo(i, j+1))
+						if(!dots[i][j].isConnectedTo(i, j+1))
 							edges.push(new Edge(this.board[i][j], this.board[i][j+1]));
+						else
+							addEdge(board[i][j], board[i][j+1]);
+							
 					}
 					if(i < Constants.NUMBER_OF_DOTS - 1)
 					{
-						if(!this.board[i][j].isConnectedTo(i+1, j))
+						if(!dots[i][j].isConnectedTo(i+1, j))
 							edges.push(new Edge(this.board[i][j], this.board[i+1][j]));
+						else
+							addEdge(board[i][j], board[i+1][j]);
 					}
 				}
 			}
 			return edges;
 		}
+		public function addEdge(dot1:Dot, dot2:Dot)
+		{
+			dot1.addEdge(dot1,dot2, true);
+			dot2.addEdge(dot2,dot1, true);
+		}
+		public function getState():Array
+		{
+			return this.board;
+		}
+		
 		public function getLegalMoves():Array
 		{
 			return this.legalMoves;

@@ -5,14 +5,12 @@
 	{
 		private var dot1:Dot;
 		private var dot2:Dot;
-		private var color:Boolean;
 		private var visited:Boolean;
 		public var heuristic:int;
 		public function Edge(dot1, dot2:Dot) 
 		{
 			this.dot1 = dot1;
 			this.dot2 = dot2;
-			this.color = color;
 			this.heuristic = 0;
 		}
 		public function getDot():Dot
@@ -22,10 +20,6 @@
 		public function getConnectedDot():Dot
 		{
 			return this.dot2;
-		}
-		public function getColor():Boolean
-		{
-			return this.color;
 		}
 		public function setVisited(val:Boolean)
 		{

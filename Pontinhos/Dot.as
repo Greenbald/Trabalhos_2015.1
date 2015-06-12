@@ -76,5 +76,10 @@
 			}
 			return null;
 		}
+		public function clone()
+		{
+			var newDot = new Dot(this.i, this.j, null, -1);
+			return newDot;
+		}
 	}
 }
