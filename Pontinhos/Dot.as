@@ -60,7 +60,7 @@
 		}
 		public function isConnectedToB(dot:Dot):Boolean
 		{
-			for(var n in edges)
+			for(var n:int = 0; n < this.edges.length; n++)
 			{
 				if(edges[n].getConnectedDot() == dot)
 					return true;
@@ -71,8 +71,8 @@
 		{
 			for(var n in edges)
 			{
-				if(edges[n].getConnectedDot().i == i && edges[n].getConnectedDot().j == j)
-				   return edges[n].getConnectedDot();
+				if(this.edges[n].getConnectedDot().i == i && this.edges[n].getConnectedDot().j == j)
+				   return this.edges[n].getConnectedDot();
 			}
 			return null;
 		}

@@ -13,7 +13,7 @@
 			this.dot1 = dot1;
 			this.dot2 = dot2;
 			this.color = color;
-			this.heuristic = -1;
+			this.heuristic = 0;
 		}
 		public function getDot():Dot
 		{

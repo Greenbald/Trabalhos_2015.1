@@ -4,10 +4,10 @@
 	import flash.events.*;
 	import Player;	
 	import Constants;
+	import GameState;
 	public class AI extends Player
 	{
 		private var dots:Array;
-		private var overlayEdges:Array;
 		public function AI(playerColor:Boolean) 
 		{
 			super(playerColor);
@@ -20,126 +20,81 @@
 		
 		override public function canMove()
 		{
-			overlayEdges = new Array();
-			var possibleEdges = getAllPossibleEdges();
-			setAllHeuristics(possibleEdges);
-			possibleEdges.sortOn("heuristic", Array.DESCENDING);
-			var edge = miniMax(possibleEdges, int.MIN_VALUE, int.MAX_VALUE, true);
-			removeOverlayEdges();
+			var gameState = new GameState(dots);
+			gameState = alphabeta(gameState, int.MIN_VALUE, int.MAX_VALUE, true);
+			var edge = gameState.getSolution();
 			clickedDots = new Array(edge.getDot(), edge.getConnectedDot());
 			dispatchEvent(new Event(Constants.CONNECT_DOTS_EVENT));
 		}
-		private function getAllPossibleEdges():Array
-		{
-			var edges = new Array();
-			for(var i:int = 0; i < dots.length; i++)
-			{
-				for(var j:int = 0; j < dots[i].length; j++)
-				{
-					if(j < Constants.NUMBER_OF_DOTS - 1)
-					{
-						if(!dots[i][j].isConnectedToB(dots[i][j+1]))
-							edges.push(new Edge(dots[i][j], dots[i][j+1]));
-					}
-					if(i < Constants.NUMBER_OF_DOTS - 1)
-					{
-						if(!dots[i][j].isConnectedToB(dots[i+1][j]))
-							edges.push(new Edge(dots[i][j], dots[i+1][j]));
-					}
-				}
-			}
-			return edges;
-		}
-		private function setAllHeuristics(edges:Array)
-		{
-			var acHeur;
-			for(var i:int = 0; i < edges.length; i++)
-			{
-				acHeur = heuristic(edges[i]);
-				edges[i].setHeuristic(acHeur);
-			}
-		}
-		private function miniMax(edges:Array, alfa:int, beta:int, maximizingPlayer:Boolean):Edge
+		private function alphabeta(gameState:GameState, alfa:int, beta:int, maximizingPlayer:Boolean):GameState
 		{
 			/* terminal node here */
-			var e = getTerminalEdgeIfExists(edges);
-			if(e != null)
+			if(gameState.getLegalMoves().length == 1)
 			{
-				e.setHeuristic(heuristic(e));
-				return e;
+				var newGameStateTerminal = gameState.cloneGameState();
+				newGameStateTerminal.addHaste(gameState.getLegalMoves()[0]);
+				return newGameStateTerminal;
 			}
-			
+			var gameStateClone = gameState.cloneGameState();
+			var moves = gameStateClone.getLegalMoves();
+			var bestValue;
 			if(maximizingPlayer)
 			{
-				var v = getMin(edges);
-				for(var i:int = 0; i < edges.length; i++)
+				var maxHaste = null;
+				bestValue = alfa;
+				for(var i:int = 0; i < moves.length; i++)
 				{
-					if(!edges[i].gotVisited())
+					gameStateClone.addHaste(moves[i]);
+					var newGameStateMax = alphabeta(gameStateClone, alfa, beta, false);
+					bestValue = Math.max(bestValue, eval(newGameStateMax));
+					gameStateClone.removeHaste(moves[i]);
+					if(bestValue > alfa)
 					{
-						edges[i].setVisited(true);
-						var mmax = miniMax(edges, alfa, beta, false);
-						edges[i].setVisited(false);
-						v =  v.getHeuristic() > mmax.getHeuristic() ? v : mmax;
-						trace(v.getHeuristic(), " Dot1", "i :", v.getDot().i, ", j :" ,v.getDot().j);
-						trace(v.getHeuristic(), " Dot2", "i :", v.getConnectedDot().i, ", j :", v.getConnectedDot().j);
-						alfa = v.getHeuristic() > alfa ? v.getHeuristic() : alfa;
-						if(beta < alfa)
-							break;
+						alfa = bestValue;
+						maxHaste = moves[i];
 					}
+					if(beta <= alfa)
+						break; /* beta cut-off */
 				}
-				v.setVisited(true);
-				/*addEdgeToBoard(v);*/
-				/*v.setHeuristic(heuristic(v));*/
-				return v;
+				if(maxHaste != null)
+					gameStateClone.addHaste(maxHaste);
+				return gameStateClone;
 			}
 			else
 			{
-				var g = getMax(edges);
-				for(var j:int = 0; j < edges.length; j++)
+				var minHaste = null;
+				bestValue = beta;
+				for(var j:int = 0; j < moves.length; j++)
 				{
-					if(!edges[j].gotVisited())
+					gameStateClone.addHaste(moves[j]);
+					var newGameStateMin = alphabeta(gameStateClone, alfa, beta, true);
+					bestValue = Math.min(bestValue, eval(newGameStateMin));
+					gameStateClone.removeHaste(moves[j]);
+					if(bestValue < beta)
 					{
-						edges[i].setVisited(true);
-						var mmin = miniMax(edges, alfa, beta, true);
-						edges[i].setVisited(false);
-						g = g.getHeuristic() > mmin.getHeuristic() ? mmin : g;
-						trace(g.getHeuristic(), " Dot1", "i :", g.getDot().i, ", j :" ,g.getDot().j);
-						trace(g.getHeuristic(), " Dot2", "i :", g.getConnectedDot().i, ", j :", g.getConnectedDot().j);
-						beta = g.getHeuristic() > beta ? beta : g.getHeuristic();
-						if(beta < alfa)
-							break;
+						beta = bestValue;
+						minHaste = moves[j];
 					}
+					if(beta <= alfa)
+						break; /* alfa cut-off */
 				}
-				g.setVisited(true);
-				/*addEdgeToBoard(g);*/
-				/*g.setHeuristic(heuristic(g));*/
-				return g;
+				if(minHaste != null)
+					gameStateClone.addHaste(minHaste);
+				return gameStateClone;
 			}
 		}
-		private function addEdgeToBoard(e:Edge)
+		private function eval(gameState:GameState):int
 		{
-			overlayEdges.push(e);
-			dots[e.getDot().i][e.getDot().j].addEdge(e.getDot(), e.getConnectedDot(), true);
-			dots[e.getConnectedDot().i][e.getConnectedDot().j].addEdge(e.getConnectedDot(), e.getDot(), true);
-		}
-		private function getTerminalEdgeIfExists(edges:Array):Edge
-		{
-			var position:int = -1;
-			var counter:int = 0;
+			var edges = gameState.getLegalMoves();
+			var heuristicValue:int = 0;
 			for(var i:int = 0; i < edges.length; i++)
 			{
-				if(!edges[i].gotVisited())
-				{
-					position = i;
-					counter++;
-				}
+				heuristicValue += heuristic(edges[i]);
 			}
-			if(counter == 1)
-				return edges[position];
-			return null;
+			return heuristicValue;
 		}
 		
-		/* Guarantee to node1(start edge) and node2(end edge) both be adjacent */
+		/* Guarantee which node1(start edge) and node2(end edge) both be adjacent */
 		private function heuristic(edge:Edge):int
 		{
 			var node1:Dot, node2:Dot;
@@ -160,36 +115,17 @@
 				   node1.isConnectedToB(dots[node1.i-1][node1.j]) &&
 				   node2.isConnectedToB(dots[node2.i-1][node2.j]) &&
 				   dots[node1.i-1][node1.j].isConnectedToB(dots[node2.i-1][node2.j]))
-				   return int.MAX_VALUE;
+				    heurValue += 100;
 				/* Check for a square below the haste */ 
 				if(node1.i < Constants.NUMBER_OF_DOTS - 1 &&
 				   node1.isConnectedToB(dots[node1.i+1][node1.j]) &&
 				   node2.isConnectedToB(dots[node2.i+1][node2.j]) &&
 				   dots[node1.i+1][node1.j].isConnectedToB(dots[node2.i+1][node2.j]))
-				   return int.MAX_VALUE;
-				   
-				if(node1.i == 0 || node1.i == Constants.NUMBER_OF_DOTS - 1)
-					heurValue += int(10*Math.random());
-				var j:int = node1.j > 0 ? node1.j - 1 : 0;
-				for(; (j < node2.j + 1) && (j < Constants.NUMBER_OF_DOTS - 1); j++)
-				{
-					if(node2.i > 0)
-					{
-						if(dots[node1.i-1][j].isConnectedToB(dots[node1.i-1][j+1]))
-							heurValue += int(Constants.AI_HEURISTIC*Math.random());
-					}
-					if(node2.i < Constants.NUMBER_OF_DOTS - 1)
-					{
-						if(dots[node2.i+1][j].isConnectedToB(dots[node2.i+1][j+1]))
-							heurValue += int(Constants.AI_HEURISTIC*Math.random());
-					}
-				}
-				if(checkFutureSquare(node1, node2, false))
-					return int.MIN_VALUE;
+				   	heurValue += 100;
+				heurValue += -100*numberOfFutureSquares(node1, node2, false);
 			}
 			else /* Vertical haste */
 			{
-				
 				var min2 = node1.i < node2.i ? node1 : node2;
 				node2 = node1.i > node2.i ? node1 : node2;
 				node1 = min2;
@@ -199,62 +135,45 @@
 				   node1.isConnectedToB(dots[node1.i][node1.j-1]) &&
 				   node2.isConnectedToB(dots[node2.i][node2.j-1]) &&
 				   dots[node1.i][node1.j-1].isConnectedToB(dots[node2.i][node2.j-1]))
-				   return int.MAX_VALUE;
+				   	heurValue += 100;
 				/* Check for a square right the haste */
 				if(node1.j < Constants.NUMBER_OF_DOTS - 1 &&
 				   node1.isConnectedToB(dots[node1.i][node1.j+1]) && 
 				   node2.isConnectedToB(dots[node2.i][node2.j+1]) &&
 				   dots[node1.i][node1.j+1].isConnectedToB(dots[node2.i][node2.j+1]))
-				   return int.MAX_VALUE;
-				   
-				if(node1.j == 0 || node1.j == Constants.NUMBER_OF_DOTS - 1)
-					heurValue += int(Constants.AI_HEURISTIC*Math.random());
-				var i:int = node1.i > 0 ? node1.i - 1 : 0;
-				for(; (i < node2.i + 1) && (i < Constants.NUMBER_OF_DOTS - 1); i++)
-				{
-					if(node1.j > 0)
-					{
-						if(dots[i][node1.j-1].isConnectedToB(dots[i+1][node1.j-1]))
-						   	heurValue += int(5*Math.random());
-					}
-					if(node2.j < Constants.NUMBER_OF_DOTS - 1)
-					{
-						if(dots[i][node2.j+1].isConnectedToB(dots[i+1][node1.j+1]))
-						   heurValue += int(Constants.AI_HEURISTIC*Math.random());
-					}
-				}
-				if(checkFutureSquare(node1, node2, true))
-					return int.MIN_VALUE;
+					heurValue += 100;	
+				heurValue += -100*numberOfFutureSquares(node1, node2, true);
 			}
 			return heurValue;
 		}
-		public function checkFutureSquare(node1:Dot, node2:Dot, vertical:Boolean):Boolean
+		public function numberOfFutureSquares(node1:Dot, node2:Dot, vertical:Boolean):int
 		{
+			var val:int = 0;
 			if(vertical)
 			{
 				if(node1.j > 0)
 				{
 					if(node1.isConnectedToB(dots[node1.i][node1.j-1]) &&
 					   dots[node1.i][node1.j-1].isConnectedToB(dots[node2.i][node2.j-1]))
-					   	return true;
+					   	val += 1;
 					else if(node2.isConnectedToB(dots[node2.i][node2.j-1]) &&
 							dots[node2.i][node2.j-1].isConnectedToB(dots[node1.i][node1.j-1]))
-						return true;
+						val += 1;
 					else if(node1.isConnectedToB(dots[node1.i][node1.j-1]) &&
 							node2.isConnectedToB(dots[node2.i][node2.j-1]))
-						return true;
+						val += 1;
 				}
 				if(node1.j < Constants.NUMBER_OF_DOTS - 1)
 				{
 					if(node1.isConnectedToB(dots[node1.i][node1.j+1]) &&
 					   dots[node1.i][node1.j+1].isConnectedToB(dots[node2.i][node2.j+1]))
-					   	return true;
+					   	val += 1;
 					else if(node2.isConnectedToB(dots[node2.i][node2.j+1]) &&
 							dots[node2.i][node2.j+1].isConnectedToB(dots[node1.i][node1.j+1]))
-						return true;
+						val += 1;
 					else if(node2.isConnectedToB(dots[node2.i][node2.j+1]) &&
 							node1.isConnectedToB(dots[node1.i][node1.j+1]))
-						return true;
+						val += 1;
 				}
 			}
 			else
@@ -263,64 +182,28 @@
 				{
 					if(node1.isConnectedToB(dots[node1.i-1][node1.j]) &&
 					   dots[node1.i-1][node1.j].isConnectedToB(dots[node2.i-1][node2.j]))
-					   	return true;
+					   	val += 1;
 					else if(node2.isConnectedToB(dots[node2.i-1][node2.j]) &&
 							dots[node2.i-1][node2.j].isConnectedToB(dots[node1.i-1][node1.j]))
-						return true;
+						val += 1;
 					else if(node2.isConnectedToB(dots[node2.i-1][node2.j]) &&
 							node1.isConnectedToB(dots[node1.i-1][node1.j]))
-						return true;
+						val += 1;
 				}
 				if(node1.i < Constants.NUMBER_OF_DOTS - 1)
 				{
 					if(node1.isConnectedToB(dots[node1.i+1][node1.j]) &&
 					   dots[node1.i+1][node1.j].isConnectedToB(dots[node2.i+1][node2.j]))
-					   	return true;
+					   	val += 1;
 					else if(node2.isConnectedToB(dots[node2.i+1][node2.j]) &&
 							dots[node2.i+1][node2.j].isConnectedToB(dots[node1.i+1][node1.j]))
-						return true;
+						val += 1;
 					else if(node1.isConnectedToB(dots[node1.i+1][node1.j]) &&
 							node2.isConnectedToB(dots[node2.i+1][node2.j]))
-						return true;
+						val += 1;
 				}
 			}
-			return false;
-		}
-		public function getMin(edges:Array):Edge
-		{
-			var min;
-			if(edges.length > 0)
-				min = edges[0];
-			else 
-				return null;
-			for(var i:int = edges.length - 1; i >= 0 ; i--)
-			{
-				if(min.getHeuristic() > edges[i].getHeuristic() && !edges[i].gotVisited())
-					min = edges[i];
-			}
-			return min;
-		}
-		public function getMax(edges:Array):Edge
-		{
-			var max;
-			if(edges.length > 0)
-				max = edges[0];
-			else 
-				return null;
-			for(var i:int = 1; i < edges.length; i++)
-			{
-				if(max.getHeuristic() < edges[i].getHeuristic() && !edges[i].gotVisited())
-					max = edges[i];
-			}
-			return max;
-		}
-		private function removeOverlayEdges()
-		{
-			for(var i:int = 0; i < overlayEdges.length; i++)
-			{
-				dots[overlayEdges[i].getDot().i][overlayEdges[i].getDot().j].removeEdge(overlayEdges[i].getDot(), overlayEdges[i].getConnectedDot());
-				dots[overlayEdges[i].getConnectedDot().i][overlayEdges[i].getConnectedDot().j].removeEdge(overlayEdges[i].getConnectedDot(), overlayEdges[i].getDot());
-			}
+			return val;
 		}
 	}
 }
