@@ -9,6 +9,7 @@
 		public static var DOT_SIZE:int;
 		public static var AI_HEURISTIC:int;
 		public static var DOT_MAX_NEIGHBOURS:int;
+		public static var FADE_IN_ANIMATION_TIME;
 		/* This is set in setupDots() in DotBoard class */
 		public static var DOT_DISTANCE:int;
 		

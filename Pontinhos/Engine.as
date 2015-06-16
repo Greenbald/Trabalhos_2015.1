@@ -27,7 +27,7 @@
 		{
 			var string:String = trim(e.target.text);
 			/* Player 1 is always true */
-			var color:Boolean = Math.random() > Math.random() ? true : false;
+			var color:Boolean = true;
 			removeChild(menu);
 			removeListeners();
 			switch(string)
@@ -36,9 +36,6 @@
 					difficultyScreen.medium.addEventListener(MouseEvent.MOUSE_DOWN, medium);
 					difficultyScreen.expert.addEventListener(MouseEvent.MOUSE_DOWN, expert);
 					addChild(difficultyScreen);
-					/*dotBoard = new DotBoard(new Player(color), new AI(!color));
-					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
-					addChild(dotBoard);*/
 					break;
 				case "Two Players":
 					dotBoard = new DotBoard(new Player(color), new Player(!color));
@@ -46,7 +43,7 @@
 					addChild(dotBoard);
 					break;
 				case "AI Game":
-					dotBoard = new DotBoard(new AI(color), new AI(!color));
+					dotBoard = new DotBoard(new AI(color, 1), new AI(!color, 2));
 					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
 					addChild(dotBoard);
 					break;
@@ -66,6 +63,7 @@
 			Constants.SCREEN_WIDTH = stage.stageWidth;
 			Constants.DOT_SIZE = (new DotAsset()).width;
 			Constants.DOT_MAX_NEIGHBOURS = 4;
+			Constants.FADE_IN_ANIMATION_TIME = 1.4;
 		}
 		public function removeGame(e:Event)
 		{
@@ -91,19 +89,17 @@
 		}
 		public function medium(e:Event)
 		{
-			var color:Boolean = Math.random() > Math.random() ? true : false;
-			Constants.AI_HEURISTIC = 10;
+			var color:Boolean = true;
 			removeChild(difficultyScreen);
-			dotBoard = new DotBoard(new Player(color), new AI(!color));
+			dotBoard = new DotBoard(new Player(color), new AI(!color, 1));
 			dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
 			addChild(dotBoard);
 		}
 		public function expert(e:Event)
 		{
-			var color:Boolean = Math.random() > Math.random() ? true : false;
-			Constants.AI_HEURISTIC = 20;
+			var color:Boolean = true;
 			removeChild(difficultyScreen);
-			dotBoard = new DotBoard(new Player(color), new AI(!color));
+			dotBoard = new DotBoard(new Player(color), new AI(!color, 1));
 			dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
 			addChild(dotBoard);
 		}

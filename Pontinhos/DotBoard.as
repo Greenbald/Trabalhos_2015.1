@@ -2,6 +2,8 @@
 {	
 	import flash.display.*;
 	import flash.events.*;
+	import fl.transitions.*;
+ 	import fl.transitions.easing.*;
 	import Constants;
 	import Engine;
 	import Constants;
@@ -23,6 +25,7 @@
 			setupBackButton();
 			geometricAssets = new Array();
 			geometricAssets.push(bButton, scorePane);
+			player1.canMove();
 		}
 		private function setupPlayers(player1:Player , player2:Player, dots:Array)
 		{
@@ -40,9 +43,9 @@
 			scorePane.player1.text = "0";
 			scorePane.player2.text = "0";
 			addChild(scorePane);
-			scorePaneMessage();
+			/*scorePaneMessage();*/
 		}
-		private function scorePaneMessage()
+		/*private function scorePaneMessage()
 		{
 			var msg = "Red Player";
 			var color:Boolean = getPlayer().getColor();
@@ -51,7 +54,7 @@
 			scorePane.messageBox.gotoAndStop(0);
 			scorePane.messageBox.turn.text = msg;
 			scorePane.messageBox.play();
-		}
+		}*/
 		private function setupDots()
 		{
 			dots = new Array(Constants.NUMBER_OF_DOTS);
@@ -169,8 +172,8 @@
 				haste.y = dot1.y < dot2.y ? dot1.y : dot2.y;
 				haste.y += h;
 			}
-			
 			addChild(haste);
+			TransitionManager.start(haste, {type:Fade, direction:Transition.IN, duration:Constants.FADE_IN_ANIMATION_TIME, easing:Strong.easeOut});
 			geometricAssets.push(haste);
 		}
 		public function connect(dot1:Dot, dot2:Dot, player:Player)
@@ -257,6 +260,7 @@
 			square.y = originNode.y + (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - square.height/2;
 			refreshScore(player);
 			addChild(square);
+			TransitionManager.start(square, {type:Fade, direction:Transition.IN, duration:Constants.FADE_IN_ANIMATION_TIME, easing:Strong.easeOut});
 			geometricAssets.push(square);
 			
 		}
@@ -279,7 +283,7 @@
 				adversary.removeEventListener(Constants.CONNECT_DOTS_EVENT, connectDots);
 				player.addEventListener(Constants.CONNECT_DOTS_EVENT, connectDots);
 			}
-			scorePaneMessage();
+			//scorePaneMessage();
 		}
 		public function gameOver()
 		{

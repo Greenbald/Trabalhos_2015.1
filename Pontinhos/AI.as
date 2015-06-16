@@ -9,8 +9,10 @@
 	{
 		private var dots:Array;
 		private var board:GameBoardAI;
-		public function AI(playerColor:Boolean) 
+		private var algorithm:int;
+		public function AI(playerColor:Boolean, algorithm:int) 
 		{
+			this.algorithm = algorithm;
 			super(playerColor);
 		}
 		override public function init(dots:Array)
@@ -24,10 +26,18 @@
 			board = new GameBoardAI(dots);
 			var possibleMoves = getAllPossibleMoves();
 			var edge;
-			if(possibleMoves.length > 9)
-				edge = greedy(possibleMoves);
-			else
-				edge = alphabeta(possibleMoves, int.MIN_VALUE, int.MAX_VALUE, true, true);
+			if(algorithm == 1)
+			{
+				if(possibleMoves.length > 9)
+					edge = greedy(possibleMoves);
+				else
+					edge = alphabeta(possibleMoves, int.MIN_VALUE, int.MAX_VALUE, true, true);
+			}
+			else if(algorithm == 2)
+			{
+				setAllHeuristics(possibleMoves);
+				edge = hillClimbing(possibleMoves, 30);
+			}
 			clickedDots = new Array(edge.getDot(), edge.getConnectedDot());
 			dispatchEvent(new Event(Constants.CONNECT_DOTS_EVENT));
 		}
@@ -134,6 +144,20 @@
 			}
 			board.bestScore = bestScore;
 			return bestMove;
+		}
+		private function hillClimbing(edges:Array, k:int):Edge
+		{
+			if(edges.length == 1)
+				return edges[0];
+			var current = edges[0];
+			var v:int = 0;
+			while(v <= k)
+			{
+				var index = int(Math.random()*edges.length);
+				if(edges[index].getHeuristic() > current.getHeuristic())
+					current = edges[index];
+			}
+			return current;
 		}
 		
 		private function getLastMove(edges:Array):Edge
