@@ -4,12 +4,17 @@
 	import Constants;
 	public class GameBoardAI 
 	{
-		private board:Array;
-		private bestScore:int;
-		private scoreBoard:Object;
+		private var board:Array;
+		public var bestScore:int;
+		public var scoreBoard:Object;
 		public function GameBoardAI(board:Array) 
 		{
 			this.board = board;
+			/*######
+			  scoreBoard[true] is the score of the AI player
+			  scoreBoard[false] is the score of the Player itself
+			######*/
+			scoreBoard = new Object();
 			scoreBoard[true] = 0;
 			scoreBoard[false] = 0;
 		}
@@ -17,8 +22,8 @@
 		{
 			e.setVisited(true);
 			var closedSquares = numberOfSquares(e);
-			board[e.getDot().i][e.getDot().j].addEdge(e.getDot(), e.getConnectedDot());
-			board[e.getConnectedDot().i][e.getConnectedDot().j].addEdge(e.getConnectedDot(), e.getDot());
+			board[e.getDot().i][e.getDot().j].addEdge(e.getDot(), e.getConnectedDot(), turn);
+			board[e.getConnectedDot().i][e.getConnectedDot().j].addEdge(e.getConnectedDot(), e.getDot(), turn);
 			if(closedSquares > 0)
 				scoreBoard[turn] += closedSquares;
 			else
@@ -55,15 +60,15 @@
 				
 				/* Check for a square above the haste */ 
 				if(node1.i > 0  && 
-				   node1.isConnectedToB(dots[node1.i-1][node1.j]) &&
-				   node2.isConnectedToB(dots[node2.i-1][node2.j]) &&
-				   dots[node1.i-1][node1.j].isConnectedToB(dots[node2.i-1][node2.j]))
+				   node1.isConnectedToB(board[node1.i-1][node1.j]) &&
+				   node2.isConnectedToB(board[node2.i-1][node2.j]) &&
+				   board[node1.i-1][node1.j].isConnectedToB(board[node2.i-1][node2.j]))
 				   nSquares += 1;
 				/* Check for a square below the haste */ 
 				if(node1.i < Constants.NUMBER_OF_DOTS - 1 &&
-				   node1.isConnectedToB(dots[node1.i+1][node1.j]) &&
-				   node2.isConnectedToB(dots[node2.i+1][node2.j]) &&
-				   dots[node1.i+1][node1.j].isConnectedToB(dots[node2.i+1][node2.j]))
+				   node1.isConnectedToB(board[node1.i+1][node1.j]) &&
+				   node2.isConnectedToB(board[node2.i+1][node2.j]) &&
+				   board[node1.i+1][node1.j].isConnectedToB(board[node2.i+1][node2.j]))
 				   nSquares += 1;
 			}
 			else /* Vertical haste */
@@ -75,15 +80,15 @@
 				
 				/* Check for a square left the haste */
 				if(node1.j > 0 &&
-				   node1.isConnectedToB(dots[node1.i][node1.j-1]) &&
-				   node2.isConnectedToB(dots[node2.i][node2.j-1]) &&
-				   dots[node1.i][node1.j-1].isConnectedToB(dots[node2.i][node2.j-1]))
+				   node1.isConnectedToB(board[node1.i][node1.j-1]) &&
+				   node2.isConnectedToB(board[node2.i][node2.j-1]) &&
+				   board[node1.i][node1.j-1].isConnectedToB(board[node2.i][node2.j-1]))
 				   nSquares += 1;
 				/* Check for a square right the haste */
 				if(node1.j < Constants.NUMBER_OF_DOTS - 1 &&
-				   node1.isConnectedToB(dots[node1.i][node1.j+1]) && 
-				   node2.isConnectedToB(dots[node2.i][node2.j+1]) &&
-				   dots[node1.i][node1.j+1].isConnectedToB(dots[node2.i][node2.j+1]))
+				   node1.isConnectedToB(board[node1.i][node1.j+1]) && 
+				   node2.isConnectedToB(board[node2.i][node2.j+1]) &&
+				   board[node1.i][node1.j+1].isConnectedToB(board[node2.i][node2.j+1]))
 				   nSquares += 1;
 				  
 			}

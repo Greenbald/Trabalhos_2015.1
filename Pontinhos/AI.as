@@ -21,13 +21,17 @@
 		
 		override public function canMove()
 		{
-			var possibleEdges = getAllPossibleEdges();
-			setAllHeuristics(possibleEdges);
-			var edge = miniMax(possibleEdges, int.MIN_VALUE, int.MAX_VALUE, true);
+			board = new GameBoardAI(dots);
+			var possibleMoves = getAllPossibleMoves();
+			var edge;
+			/*if(possibleMoves > 10)
+				edge = hillClimbing(possibleMoves);
+			else*/
+			edge = alphabeta(possibleMoves, int.MIN_VALUE, int.MAX_VALUE, true, true);
 			clickedDots = new Array(edge.getDot(), edge.getConnectedDot());
 			dispatchEvent(new Event(Constants.CONNECT_DOTS_EVENT));
 		}
-		private function getAllPossibleEdges():Array
+		private function getAllPossibleMoves():Array
 		{
 			var edges = new Array();
 			for(var i:int = 0; i < dots.length; i++)
@@ -48,7 +52,7 @@
 			}
 			return edges;
 		}
-		private function setAllHeuristics(edges:Array)
+/*		private function setAllHeuristics(edges:Array)
 		{
 			var acHeur;
 			for(var i:int = 0; i < edges.length; i++)
@@ -56,56 +60,59 @@
 				acHeur = heuristic(edges[i]);
 				edges[i].setHeuristic(acHeur);
 			}
-		}
-		private function miniMax(edges:Array, alfa:int, beta:int, maximizingPlayer:Boolean):Edge
+		}*/
+		private function alphabeta(edges:Array, alfa:int, beta:int, turn:Boolean, maximizingPlayer:Boolean):Edge
 		{
-			/* terminal node here */
-			var e = getTerminalEdgeIfExists(edges);
+			var e = getLastMove(edges);
 			if(e != null)
 			{
-				e.setHeuristic(heuristic(e));
+				board.bestScore = board.scoreBoard[maximizingPlayer] - board.scoreBoard[!maximizingPlayer];
 				return e;
 			}
-			
+			var bestScore:int;
+			var bestMove:Edge = getNextEdge(edges);
 			if(maximizingPlayer)
 			{
-				var v = getMax(edges);
+				bestScore = int.MIN_VALUE;
 				for(var i:int = 0; i < edges.length; i++)
 				{
 					if(!edges[i].gotVisited())
 					{
-						edges[i].setVisited(true);
-						var mmax = miniMax(edges, alfa, beta, false);
-						v =  v.getHeuristic() > mmax.getHeuristic() ? v : mmax;
-						alfa = v.getHeuristic() > alfa ? v.getHeuristic() : alfa;
+						turn = board.executeMove(edges[i], turn);
+						alphabeta(edges, alfa, beta, maximizingPlayer,maximizingPlayer);
+						turn = board.unexecuteMove(edges[i], maximizingPlayer);
+						bestMove = board.bestScore > bestScore ? edges[i] : bestMove;
+						bestScore = Math.max(board.bestScore, bestScore);
+						alfa = bestScore;
 						if(beta <= alfa)
 							break;
 					}
 				}
-				v.setHeuristic(heuristic(v));
-				return v;
 				
 			}
 			else
 			{
-				var g = getMin(edges);
+				bestScore = int.MAX_VALUE;
 				for(var j:int = 0; j < edges.length; j++)
 				{
 					if(!edges[j].gotVisited())
 					{
-						edges[j].setVisited(true);
-						var mmin = miniMax(edges, alfa, beta, true);
-						g = g.getHeuristic() > mmin.getHeuristic() ? mmin : g;
-						beta = g.getHeuristic() > beta ? beta : g.getHeuristic();
+						turn = board.executeMove(edges[j], turn);
+						alphabeta(edges, alfa, beta, turn,maximizingPlayer);
+						turn = board.unexecuteMove(edges[j], turn);
+						bestMove = board.bestScore < bestScore ? edges[j] : bestMove;
+						bestScore = Math.min(board.bestScore, bestScore);
+						beta = bestScore;
 						if(beta <= alfa)
 							break;
 					}
 				}
-				g.setHeuristic(heuristic(g));
-				return g;
 			}
+			board.bestScore = bestScore;
+			return bestMove;
 		}
-		private function getTerminalEdgeIfExists(edges:Array):Edge
+		
+		private function getLastMove(edges:Array):Edge
 		{
 			var position:int = -1;
 			var counter:int = 0;
@@ -122,8 +129,17 @@
 			return null;
 		}
 		
-		/* Guarantee to node1(start edge) and node2(end edge) both be adjacent */
+		public function getNextEdge(edges:Array):Edge
+		{
+			for(var j:int = 0; j < edges.length; j++)
+			{
+				if(!edges[j].gotVisited())
+					return edges[j];
+			}
+			return null;
+		}
 		
+		/* It checks for a square that will be closed in the next turn, based on the move of the actual turn */ 
 		public function checkFutureSquare(node1:Dot, node2:Dot, vertical:Boolean):Boolean
 		{
 			if(vertical)
