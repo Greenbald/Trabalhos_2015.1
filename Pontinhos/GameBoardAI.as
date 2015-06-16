@@ -45,7 +45,7 @@
 		}
 
 		/* 0 <= RETURN VALUE <= 2*/
-		private function numberOfSquares(edge:Edge):int
+		public function numberOfSquares(edge:Edge):int
 		{
 			var node1:Dot, node2:Dot;
 			node1 = edge.getDot();
@@ -93,6 +93,74 @@
 				  
 			}
 			return nSquares;
+		}
+		/* It checks for a square that will be closed in the next turn, based on the move of the actual turn */ 
+		public function checkFutureSquare(edge:Edge):int
+		{
+			var node1 = edge.getDot();
+			var node2 = edge.getConnectedDot();
+			var futureSquares:int = 0;
+			if(node1.j == node2.j)
+			{
+				var min2 = node1.i < node2.i ? node1 : node2;
+				node2 = node1.i > node2.i ? node1 : node2;
+				node1 = min2;
+				if(node1.j > 0)
+				{
+					if(node1.isConnectedToB(board[node1.i][node1.j-1]) &&
+					   board[node1.i][node1.j-1].isConnectedToB(board[node2.i][node2.j-1]))
+					   	futureSquares++;
+					else if(node2.isConnectedToB(board[node2.i][node2.j-1]) &&
+							board[node2.i][node2.j-1].isConnectedToB(board[node1.i][node1.j-1]))
+						futureSquares++;
+					else if(node1.isConnectedToB(board[node1.i][node1.j-1]) &&
+							node2.isConnectedToB(board[node2.i][node2.j-1]))
+						futureSquares++;
+				}
+				if(node1.j < Constants.NUMBER_OF_DOTS - 1)
+				{
+					if(node1.isConnectedToB(board[node1.i][node1.j+1]) &&
+					   board[node1.i][node1.j+1].isConnectedToB(board[node2.i][node2.j+1]))
+					   	futureSquares++;
+					else if(node2.isConnectedToB(board[node2.i][node2.j+1]) &&
+							board[node2.i][node2.j+1].isConnectedToB(board[node1.i][node1.j+1]))
+						futureSquares++;
+					else if(node2.isConnectedToB(board[node2.i][node2.j+1]) &&
+							node1.isConnectedToB(board[node1.i][node1.j+1]))
+						futureSquares++;
+				}
+			}
+			else
+			{
+				var min = node1.j < node2.j ? node1 : node2;
+				node2 = node1.j > node2.j ? node1 : node2;
+				node1 = min;
+				if(node1.i > 0)
+				{
+					if(node1.isConnectedToB(board[node1.i-1][node1.j]) &&
+					   board[node1.i-1][node1.j].isConnectedToB(board[node2.i-1][node2.j]))
+					   	futureSquares++;
+					else if(node2.isConnectedToB(board[node2.i-1][node2.j]) &&
+							board[node2.i-1][node2.j].isConnectedToB(board[node1.i-1][node1.j]))
+						futureSquares++;
+					else if(node2.isConnectedToB(board[node2.i-1][node2.j]) &&
+							node1.isConnectedToB(board[node1.i-1][node1.j]))
+						futureSquares++;
+				}
+				if(node1.i < Constants.NUMBER_OF_DOTS - 1)
+				{
+					if(node1.isConnectedToB(board[node1.i+1][node1.j]) &&
+					   board[node1.i+1][node1.j].isConnectedToB(board[node2.i+1][node2.j]))
+					   	futureSquares++;
+					else if(node2.isConnectedToB(board[node2.i+1][node2.j]) &&
+							board[node2.i+1][node2.j].isConnectedToB(board[node1.i+1][node1.j]))
+						futureSquares++;
+					else if(node1.isConnectedToB(board[node1.i+1][node1.j]) &&
+							node2.isConnectedToB(board[node2.i+1][node2.j]))
+						futureSquares++;
+				}
+			}
+			return futureSquares;
 		}
 	}
 	

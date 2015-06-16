@@ -7,7 +7,7 @@
 		private var dot2:Dot;
 		private var color:Boolean;
 		private var visited:Boolean;
-		private var heuristic:int;
+		public var heuristic:int;
 		public function Edge(dot1, dot2:Dot) 
 		{
 			this.dot1 = dot1;
