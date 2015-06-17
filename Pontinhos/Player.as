@@ -9,8 +9,6 @@
 		protected var playerColor:Boolean;
 		protected var clickedDots:Array;
 		protected var adversary:Player;
-		protected var scorePane;
-		protected var points; /* Make this with the score pane */
 		public function Player(playerColor:Boolean) 
 		{
 			this.playerColor = playerColor;

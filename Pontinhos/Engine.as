@@ -3,7 +3,7 @@
 	import flash.display.*;
 	import flash.events.*;
 	import flash.ui.Keyboard;
-	import flash.desktop.NativeApplication;
+	//import flash.desktop.NativeApplication;
 	import Constants;
 	import DotBoard;
 	public class Engine extends MovieClip
@@ -33,22 +33,25 @@
 			switch(string)
 			{
 				case "One Player":
-					difficultyScreen.medium.addEventListener(MouseEvent.MOUSE_DOWN, medium);
-					difficultyScreen.expert.addEventListener(MouseEvent.MOUSE_DOWN, expert);
-					addChild(difficultyScreen);
+					//difficultyScreen.medium.addEventListener(MouseEvent.MOUSE_DOWN, medium);
+					//difficultyScreen.expert.addEventListener(MouseEvent.MOUSE_DOWN, expert);
+					//addChild(difficultyScreen);
+					dotBoard = new DotBoard(new Player(color), new AI(!color, 1));
+					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
+					addChild(dotBoard);
 					break;
 				case "Two Players":
 					dotBoard = new DotBoard(new Player(color), new Player(!color));
 					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
 					addChild(dotBoard);
 					break;
-				case "AI Game":
+				case "AI vs AI":
 					dotBoard = new DotBoard(new AI(color, 1), new AI(!color, 2));
 					dotBoard.addEventListener(Constants.GO_BACK_MENU_EVENT, removeGame);
 					addChild(dotBoard);
 					break;
 				case "Exit":
-					NativeApplication.nativeApplication.exit(); 
+					//NativeApplication.nativeApplication.exit(); 
 					break;
 			}
 		}
@@ -58,7 +61,7 @@
 		}
 		public function setupConstants()
 		{
-			Constants.NUMBER_OF_DOTS = 3;
+			Constants.NUMBER_OF_DOTS = 5;
 			Constants.SCREEN_HEIGHT = stage.stageHeight;
 			Constants.SCREEN_WIDTH = stage.stageWidth;
 			Constants.DOT_SIZE = (new DotAsset()).width;

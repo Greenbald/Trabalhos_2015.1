@@ -6,14 +6,12 @@
 		public var dot:DotAsset;
 		public var i:int;
 		public var j:int;
-		public var graph:int;
 		private var edges:Array;
 		public function Dot(i:int, j:int, dot:DotAsset, graph:int) 
 		{
 			this.dot = dot;
 			this.i = i;
 			this.j = j;
-			this.graph = graph;
 			edges = new Array();
 		}
 		public function addChildren()

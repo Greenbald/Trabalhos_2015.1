@@ -4,20 +4,29 @@
 	import Constants;
 	public class GameBoardAI 
 	{
+		/* The board itself */
 		private var board:Array;
+		
+		/* The bestScore so far */
 		public var bestScore:int;
+		
+		/* scoreBoard is a map that correlates a player with his score */
 		public var scoreBoard:Object;
 		public function GameBoardAI(board:Array) 
 		{
+			/* This class is an abstraction for the board which the AI
+			will have until the leaf of alphabeta(when the board is in the game over state).
+			When it's in the leaf of alphabeta the scoreBoard represents the total score for each player.*/
 			this.board = board;
-			/*######
-			  scoreBoard[true] is the score of the AI player
-			  scoreBoard[false] is the score of the Player itself
-			######*/
 			scoreBoard = new Object();
 			scoreBoard[true] = 0;
 			scoreBoard[false] = 0;
 		}
+		/* 
+		This function just insert the edge in the board, and sums the number of squares that is being closed by
+		this edge and return the new turn, if closedSquares > 0, it will return the same turn received as parameter,
+		otherwise return !turn.
+		*/
 		public function executeMove(e:Edge, turn:Boolean):Boolean
 		{
 			e.setVisited(true);
@@ -31,6 +40,10 @@
 			return turn;
 			
 		}
+		/* 
+		This functions undo the move and returns the turn that was before, remove any score that was added by a closed
+		square.
+		*/
 		public function unexecuteMove(e:Edge, turn:Boolean):Boolean
 		{
 			e.setVisited(false);
@@ -44,6 +57,7 @@
 			return turn;
 		}
 
+		/* this function just calculate the number of squares that is closed using the edge PARAMETER */
 		/* 0 <= RETURN VALUE <= 2*/
 		public function numberOfSquares(edge:Edge):int
 		{

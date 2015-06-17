@@ -15,19 +15,26 @@
 			this.algorithm = algorithm;
 			super(playerColor);
 		}
+		/* only used by an AI player */
 		override public function init(dots:Array)
 		{
 			this.dots = dots;
 		}
+		/* only used by a human player */
 		override public function move_(dot:Dot){}
 		
+		/* This function is the AI moviment */
 		override public function canMove()
 		{
 			board = new GameBoardAI(dots);
+			/* get all possible Edges that the AI can play in the board */
 			var possibleMoves = getAllPossibleMoves();
 			var edge;
+			/* The algorithm variable is used for AI vs AI, when one of the AI uses hillClimbing */
 			if(algorithm == 1)
 			{
+				/* We make sure here that is possible to make alphabeta in a reasonable time by this comparison,
+				a number of possibleMoves greater then 10 is impratical to our alphabeta algorithm*/
 				if(possibleMoves.length > 9)
 					edge = greedy(possibleMoves);
 				else
@@ -39,6 +46,11 @@
 				edge = hillClimbing(possibleMoves, 30);
 			}
 			clickedDots = new Array(edge.getDot(), edge.getConnectedDot());
+			
+			/* 
+			It dispatch an event to warn the dotBoard that the move is already done, then the dotBoard
+			will get the array clickedDots and connect the edge on the board.    
+			*/
 			dispatchEvent(new Event(Constants.CONNECT_DOTS_EVENT));
 		}
 		private function getAllPossibleMoves():Array
@@ -156,6 +168,7 @@
 				var index = int(Math.random()*edges.length);
 				if(edges[index].getHeuristic() > current.getHeuristic())
 					current = edges[index];
+				v++;
 			}
 			return current;
 		}

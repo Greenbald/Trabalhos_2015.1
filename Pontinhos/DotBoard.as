@@ -1,5 +1,6 @@
 ﻿package  
 {	
+	import flash.utils.Timer;
 	import flash.display.*;
 	import flash.events.*;
 	import fl.transitions.*;
@@ -15,6 +16,7 @@
 		private var player2:Player;
 		private var geometricAssets:Array;
 		private var bButton:BackButton;
+		private var playerTurn:Player;
 		
 		public function DotBoard(player1:Player , player2:Player) 
 		{
@@ -35,7 +37,8 @@
 			this.player1.addAdversary(player2);
 			this.player2.addAdversary(player1);
 			this.player1.init(dots);
-			this.player2.init(dots)
+			this.player2.init(dots);
+			playerTurn = player1;
 		}
 		private function setupScorePane()
 		{
@@ -103,7 +106,7 @@
 					moveAgain = true;
 				if(gameOver())
 				{
-					gameOverScreen(player);
+					gameOverScreen();
 					return;
 				}
 				trace("Dot 1 Neighbours : " + clickedDots[0].getNumberOfNeighbours());
@@ -112,9 +115,23 @@
 			refreshDotColors(clickedDots[0], clickedDots[1]);
 			player.refreshDots();
 			if(moveAgain)
-				player.canMove();
+				playerTurn = player;
 			else
-				adversary.canMove();
+				playerTurn = adversary;
+				
+			/* Used to delay the AI */
+			var timer:Timer = new Timer(500, 0);
+			timer.addEventListener(TimerEvent.TIMER, timerHandler);
+			timer.start();
+			
+		}
+		public function timerHandler(e:TimerEvent)
+		{
+			e.target.removeEventListener(TimerEvent.TIMER, timerHandler);
+			if(gameOver())
+				gameOverScreen();
+			else
+				playerTurn.canMove();
 		}
 		public function onClickDot(e:Event = null)
 		{
@@ -251,9 +268,9 @@
 		{
 			var square;
 			if(player.getColor())
-				square = new BlueSquare();
+				square = new BlueSquare(); //Green Pig
 			else
-				square = new RedSquare();
+				square = new RedSquare(); //Pink Pig
 			square.width = Constants.DOT_DISTANCE - Constants.DOT_SIZE - 7;
 			square.height = square.width;
 			square.x = originNode.x + (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - square.width/2;
@@ -312,20 +329,50 @@
 			}
 			return true;
 		}
-		public function gameOverScreen(player:Player)
+		public function gameOverScreen()
 		{
+			var player;
 			var gameOverScreen = new GameOverScreen();
-			var msg = player.getColor() ? "Red Win!" : "Blue Win" 
-			if(parseInt(scorePane.player1.text) ==  parseInt(scorePane.player2.text))
-				msg = "Draw!";
-			gameOverScreen.winner.text = msg;
+			var pig1;
+			var pig2 = null;
+			var drawBoth:Boolean;
+			var msg;
+			player = this.player2;
+			if(parseInt(scorePane.player1.text) > parseInt(scorePane.player2.text))
+				player = this.player1;
+				
+			if(player.getColor())
+			{
+				pig1 = new BlueSquare();
+				pig2 = new RedSquare();
+			}
+			else
+			{
+				pig1 = new RedSquare();
+				pig2 = new BlueSquare();
+			}
+			pig1.width = 150;
+			pig1.height = 150;
+			pig1.x = Constants.SCREEN_WIDTH/2 - pig1.width/2;
+			pig1.y = Constants.SCREEN_HEIGHT/2 - pig1.height/2;
+			gameOverScreen.addChild(pig1);
+			if(parseInt(scorePane.player1.text) == parseInt(scorePane.player2.text))
+			{
+				pig1.x -= pig1.width/2;
+				pig2.width = 150;
+				pig2.height = 150;
+				pig2.x = pig1.x + pig1.width + 10;
+				pig2.y = pig1.y;
+				gameOverScreen.addChild(pig2);
+			}
+				
 			msg = parseInt(scorePane.player1.text) > parseInt(scorePane.player2.text) ? scorePane.player1.text : scorePane.player2.text;
 			msg += " x "
 			msg += parseInt(scorePane.player1.text) < parseInt(scorePane.player2.text) ? scorePane.player1.text : scorePane.player2.text
 			gameOverScreen.score.text = msg;
+			geometricAssets.push(gameOverScreen);
 			addChild(gameOverScreen);
 			setChildIndex(bButton, this.numChildren-1);
-			
 		}
 		
 		public function refreshDotColors(dotNode1:Dot, dotNode2:Dot = null)
