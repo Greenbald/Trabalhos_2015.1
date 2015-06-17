@@ -27,14 +27,15 @@
 		override public function canMove()
 		{
 			board = new GameBoardAI(dots);
-			/* get all possible Edges that the AI can play in the board */
+			/* get all possible Edges(movements) that the AI can play in the board */
 			var possibleMoves = getAllPossibleMoves();
 			var edge;
-			/* The algorithm variable is used for AI vs AI, when one of the AI uses hillClimbing */
+			/* The algorithm variable is used for AI vs AI, when one of the AI uses hillClimbing
+			   and the other uses greedy + minimax alpha-beta */
 			if(algorithm == 1)
 			{
 				/* We make sure here that is possible to make alphabeta in a reasonable time by this comparison,
-				a number of possibleMoves greater then 10 is impratical to our alphabeta algorithm*/
+				a number of possibleMoves greater then 10 is impractical to our alphabeta algorithm*/
 				if(possibleMoves.length > 9)
 					edge = greedy(possibleMoves);
 				else
@@ -117,7 +118,7 @@
 			}
 			var bestScore:int;
 			var bestMove:Edge = getNextEdge(edges);
-			if(turn)
+			if(turn == maximizingPlayer)
 			{
 				bestScore = int.MIN_VALUE;
 				for(var i:int = 0; i < edges.length; i++)

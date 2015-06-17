@@ -97,7 +97,7 @@
 			var clickedDots = player.getClickedDots();
 			if(verifyAdjacency(clickedDots[0], clickedDots[1]) && !clickedDots[0].isConnectedToB(clickedDots[1]))
 			{
-				drawLine(clickedDots[0], clickedDots[1], player);
+				drawEdge(clickedDots[0], clickedDots[1], player);
 				connect(clickedDots[0], clickedDots[1], player);
 				removeListenerIfMaxNeighbours(clickedDots[0], clickedDots[1]);
 				if(!drawSquareIfClosed(clickedDots[0], clickedDots[1], player))
@@ -163,35 +163,37 @@
 				return true;
 			return false;
 		}
-		public function drawLine(dot1:Dot, dot2:Dot, player:Player)
+		public function drawEdge(dot1:Dot, dot2:Dot, player:Player)
 		{
-			/* We suppose a haste with fixed size of 30, for a dot of size 15x15 */
-			var haste;
+			var edge;
 			var h_width = Constants.DOT_DISTANCE - Constants.DOT_SIZE;
 			var h_height = Constants.DOT_SIZE + 10;
-			var h = (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - (h_width > h_height ? h_width : h_height)/2
+			var h = (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - (h_width > h_height ? h_width : h_height)/2;
 			if(dot1.i == dot2.i)
 			{
-				haste = new BlueHaste();
-				haste.width = h_width;
-				haste.height = h_height;
-				haste.x = dot1.x < dot2.x ? dot1.x : dot2.x ;
-				haste.x += h;
-				haste.y = dot1.y - 4;
+				edge = new PinkHorizontal();
+				if(player.getColor())
+					edge = new GreenHorizontal();
+				edge.width = h_width;
+				edge.height = h_height;
+				edge.x = dot1.x < dot2.x ? dot1.x : dot2.x ;
+				edge.x += h;
+				edge.y = dot1.y - 4;
 			}
 			else
 			{
-				haste = new RedHaste();
-				haste.width = h_height;
-				haste.height = h_width;
-				//haste.rotation += 90;
-				haste.x = dot1.x - 3; //+ h_width;
-				haste.y = dot1.y < dot2.y ? dot1.y : dot2.y;
-				haste.y += h;
+				edge = new PinkVertical();
+				if(player.getColor())
+					edge = new GreenVertical();
+				edge.width = h_height/2;
+				edge.height = h_width;
+				edge.x = dot1.x + 3;
+				edge.y = dot1.y < dot2.y ? dot1.y : dot2.y;
+				edge.y += h;
 			}
-			addChild(haste);
-			TransitionManager.start(haste, {type:Fade, direction:Transition.IN, duration:Constants.FADE_IN_ANIMATION_TIME, easing:Strong.easeOut});
-			geometricAssets.push(haste);
+			addChild(edge);
+			TransitionManager.start(edge, {type:Fade, direction:Transition.IN, duration:Constants.FADE_IN_ANIMATION_TIME, easing:Strong.easeOut});
+			geometricAssets.push(edge);
 		}
 		public function connect(dot1:Dot, dot2:Dot, player:Player)
 		{
@@ -268,9 +270,9 @@
 		{
 			var square;
 			if(player.getColor())
-				square = new BlueSquare(); //Green Pig
+				square = new GreenPig();
 			else
-				square = new RedSquare(); //Pink Pig
+				square = new PinkPig();
 			square.width = Constants.DOT_DISTANCE - Constants.DOT_SIZE - 7;
 			square.height = square.width;
 			square.x = originNode.x + (Constants.DOT_DISTANCE + Constants.DOT_SIZE)/2 - square.width/2;
@@ -331,32 +333,33 @@
 		}
 		public function gameOverScreen()
 		{
-			var player;
+			var winner;
 			var gameOverScreen = new GameOverScreen();
 			var pig1;
 			var pig2 = null;
-			var drawBoth:Boolean;
+			var player1Score = parseInt(scorePane.player1.text);
+			var player2Score = parseInt(scorePane.player2.text);
 			var msg;
-			player = this.player2;
-			if(parseInt(scorePane.player1.text) > parseInt(scorePane.player2.text))
-				player = this.player1;
+			winner = this.player2;
+			if(player1Score > player2Score)
+				winner = this.player1;
 				
-			if(player.getColor())
+			if(winner.getColor())
 			{
-				pig1 = new BlueSquare();
-				pig2 = new RedSquare();
+				pig1 = new GreenPig();
+				pig2 = new PinkPig();
 			}
 			else
 			{
-				pig1 = new RedSquare();
-				pig2 = new BlueSquare();
+				pig1 = new PinkPig();
+				pig2 = new GreenPig();
 			}
 			pig1.width = 150;
 			pig1.height = 150;
 			pig1.x = Constants.SCREEN_WIDTH/2 - pig1.width/2;
 			pig1.y = Constants.SCREEN_HEIGHT/2 - pig1.height/2;
 			gameOverScreen.addChild(pig1);
-			if(parseInt(scorePane.player1.text) == parseInt(scorePane.player2.text))
+			if(player1Score == player2Score)
 			{
 				pig1.x -= pig1.width/2;
 				pig2.width = 150;
@@ -366,9 +369,9 @@
 				gameOverScreen.addChild(pig2);
 			}
 				
-			msg = parseInt(scorePane.player1.text) > parseInt(scorePane.player2.text) ? scorePane.player1.text : scorePane.player2.text;
+			msg = player1Score > player2Score ? player1Score : player2Score;
 			msg += " x "
-			msg += parseInt(scorePane.player1.text) < parseInt(scorePane.player2.text) ? scorePane.player1.text : scorePane.player2.text
+			msg += player1Score < player2Score ? player1Score : player2Score;
 			gameOverScreen.score.text = msg;
 			geometricAssets.push(gameOverScreen);
 			addChild(gameOverScreen);
