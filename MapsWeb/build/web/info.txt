@@ -1,8 +1,0 @@
--22.881802904989065, -43.08579352416928 : -22.894770844761474, -43.07892706909156
-
-Execution time(ms) : 5, Distance(km) : 2.6660779576527167, Generated Nodes : 621, Path Nodes : 74
-Execution time(ms) : 723, Distance(km) : 2.803404898610391, Generated Nodes : 16608, Path Nodes : 72
-Execution time(ms) : 49, Distance(km) : 2.6660779576527167, Generated Nodes : 2116, Path Nodes : 74
-
--22.88169948608846 , -43.08155339213039 : -22.9062110310598, -43.06198399515795
-

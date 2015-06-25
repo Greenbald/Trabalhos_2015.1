@@ -1,99 +1,136 @@
 package maps;
 
-
-
 import java.util.LinkedList;
 
 /**
  *
  * @author Paulo, Juan, Lucas
  */
-public class GeoNode implements Comparable<GeoNode>
-{
+public class GeoNode implements Comparable<GeoNode> {
+
     private double lat;
     private double lon;
     private long id;  /* This is an identifier for a way*/
+
     private double d;
     private double f;
+    private int maxSpeed;
+    private int highwayType;
+    private int surfaceType;
+
     private LinkedList<GeoNode> connected;
-    public GeoNode(double lat, double lon)
-    {
+
+    public GeoNode(double lat, double lon) {
         this.connected = new LinkedList<GeoNode>();
         this.lat = lat;
         this.lon = lon;
         this.d = 0;
         this.f = 0;
+        this.maxSpeed = 0;
+        this.highwayType = 0;
+        this.surfaceType = 0;
     }
-    public GeoNode(double lat, double lon, long id)
-    {
+
+    public GeoNode(double lat, double lon, long id) {
         this.connected = new LinkedList<GeoNode>();
         this.lat = lat;
         this.lon = lon;
         this.id = id;
         this.d = 0;
         this.f = 0;
+        this.maxSpeed = 0;
+        this.highwayType = 0;
+        this.surfaceType = 0;
     }
-    public GeoNode(long id)
-    {
+
+    public GeoNode(long id) {
         this.id = id;
         this.connected = new LinkedList<GeoNode>();
         this.d = 0;
         this.f = 0;
+        this.maxSpeed = 0;
+        this.highwayType = 0;
+        this.surfaceType = 0;
     }
-    void setLatLon(double latitude, double longditude) 
-    {
+
+    void setLatLon(double latitude, double longditude) {
         this.lat = latitude;
         this.lon = longditude;
     }
-    void setFunction(double val)
-    {
+
+    void setFunction(double val) {
         this.f = val;
     }
     /* Distance from the start node until this node */
-    void setDistance(double val) 
-    {
+
+    void setDistance(double val) {
         this.d = val;
     }
-    double getLat()
-    {
+
+    double getLat() {
         return this.lat;
     }
-    double getLon()
-    {
+
+    double getLon() {
         return this.lon;
     }
-    long getId()
-    {
+
+    public int getHighwayType() {
+        return highwayType;
+    }
+
+    public void setHighwayType(int highwayType) {
+        this.highwayType = highwayType;
+    }
+
+    public int getSurfaceType() {
+        return surfaceType;
+    }
+
+    public void setSurfaceType(int surfaceType) {
+        this.surfaceType = surfaceType;
+    }
+
+    long getId() {
         return this.id;
     }
-    double getDistance()
-    {
+
+    double getDistance() {
         return this.d;
     }
-    double getFunction()
-    {
+
+    double getFunction() {
         return this.f;
     }
-    LinkedList<GeoNode> getConnections()
-    {
+
+    public int getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    LinkedList<GeoNode> getConnections() {
         return this.connected;
     }
-    boolean isConnected(GeoNode a)
-    {
-        for (GeoNode n : connected) 
-        {
-            if(n == a)
+
+    boolean isConnected(GeoNode a) {
+        for (GeoNode n : connected) {
+            if (n == a) {
                 return true;
+            }
         }
         return false;
     }
-    void connect(GeoNode a)
-    {
-        if(!isConnected(a))
+
+    void connect(GeoNode a) {
+        if (!isConnected(a)) {
             connected.add(a);
+        }
     }
-    public double distanceFrom(GeoNode n) 
-    {	// Haversine formula
+
+    public double distanceFrom(GeoNode n) {	// Haversine formula
         final double R = 6372.8;
         double lat1 = Math.toRadians(lat);
         double lat2 = Math.toRadians(n.getLat());
@@ -105,8 +142,7 @@ public class GeoNode implements Comparable<GeoNode>
         return R * c;
     }
 
-    public double distanceFrom(double latOther, double lonOther) 
-    {	// Haversine formula
+    public double distanceFrom(double latOther, double lonOther) {	// Haversine formula
         final double R = 6372.8;
         double lat1 = Math.toRadians(lat);
         double lat2 = Math.toRadians(latOther);
@@ -117,14 +153,19 @@ public class GeoNode implements Comparable<GeoNode>
         double c = 2 * Math.asin(Math.sqrt(a));
         return R * c;
     }
+
     @Override
-    public int compareTo(GeoNode t)
-    {
-        if(this.f > t.getFunction())
+    public int compareTo(GeoNode t) {
+        if (this.f > t.getFunction()) {
             return 1;
-        else if(this.f < t.getFunction())
+        } else if (this.f < t.getFunction()) {
             return -1;
-        else
+        } else {
             return 0;
+        }
+    }
+
+    double wayValuesHeur() {
+        return -(((highwayType * 20) + (maxSpeed) + (surfaceType * 10))/50);
     }
 }

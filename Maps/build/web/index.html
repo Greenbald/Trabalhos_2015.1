@@ -44,8 +44,14 @@ var calculate = function() {
 		var tempStart = new OpenLayers.Geometry.Point(startPoint[0], startPoint[1]).transform( toProjection, fromProjection);
 		var tempEnd = new OpenLayers.Geometry.Point(endPoint[0], endPoint[1]).transform( toProjection, fromProjection);
                 var algorithm;
-                if($('#aStar').is(':checked'))
-                    algorithm = "aStar";
+                if($('#aStarSLH').is(':checked'))
+                    algorithm = "aStarSLH";
+                else if($('#aStarHIH').is(':checked'))
+                    algorithm = "aStarHIH";
+                else if($('#greedySearchSLH').is(':checked'))
+                    algorithm = "greedySearchSLH";
+                else if($('#greedySearchHIH').is(':checked'))
+                    algorithm = "greedySearchHIH";
                 else if($('#uniformCostSearch').is(':checked'))
                     algorithm = "uniformCostSearch";
                 else if($('#breadthFirstSearch').is(':checked'))
@@ -172,7 +178,10 @@ $(document).keydown(function(e) {
 <body onload="init()">
 <b>Select two points on the map by clicking(Only in Niteroi city). Reset the points by clicking "Reset" or pressing "R".</b> </br> </br>
 Select the Algorithm : </br>
-<input type="radio" name="radio" id="aStar" value="aStar" checked/> A* Algorithm
+<input type="radio" name="radio" id="aStarSLH" value="aStarSLH" checked/> A* Algorithm with Straight-Line Distance Heuristic
+<input type="radio" name="radio" id="aStarHIH" value="aStarHIH"/> A* Algorithm with Highway Information Heuristic
+<input type="radio" name="radio" id="greedySearchSLH" value="greedySearchSLH"/> Greedy Search with Straight-Line Distance Heuristic
+<input type="radio" name="radio" id="greedySearchHIH" value="greedySearchHIH"/> Greedy Search with Highway Information Heuristic
 <input type="radio" name="radio" id="breadthFirstSearch" value="breadthFirstSearch"/> Breadth First Search Algorithm
 <input type="radio" name="radio" id="uniformCostSearch" value="uniformCostSearch" required/> Uniform Cost Search Algorithm
 <input type="radio" name="radio" id="hillClimbing" value="hillClimbing" required/> Hill Climbing </br>
